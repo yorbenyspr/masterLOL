@@ -4,43 +4,43 @@ var app = express();
 
 var server = require('http').Server(app);  
 
-var io = require('../node_modules/socket.io')(server);
+var WebSocketServer = require('../node_modules/websocket').server;
 var clients =[];
 var sequence =1;
-server.listen(8082, function() {  
+server.listen(8081, function() {  
 
     console.log('Servidor corriendo en http://localhost:8081');
 
 });
-
-// Event fired every time a new client connects:
-io.on('connection', function(socket) {
-
-    console.log('New client connected (id=' + socket.id + ').');
-
-    clients.push(socket);
-
-
-
-    // When socket disconnects, remove it from the list:
-
-    socket.on('disconnect', function() {
-
-        var index = clients.indexOf(socket);
-
-        if (index != -1) {
-
-            clients.splice(index, 1);
-
-            console.log('Client gone (id=' + socket.id + ').');
-
-        }
-
-    });
+//Creating websocket server
+var wServer= new WebSocketServer({httpServer: server,autoAcceptConnections:false});
+//Used for accept or reject connections
+wServer.on('request', function(webSocketRequest){
+	console.log('New Request');
+	webSocketRequest.accept();
 
 });
+//Called when a client is connected
+wServer.on('connect', function(webSocketConnection){
+	console.log('New Connection');
+	clients.push(webSocketConnection);
+	
+});
 
+//Called when a client close the connection
+wServer.on('close', function(webSocketConnection,closeReason,description){
+	
+	var index = clients.indexOf(webSocketConnection);
+	if (index != -1) {
 
+            clients.splice(index, 1);
+	    console.log('Closed Connection ' + closeReason +" "+ description);
+
+        }
+	
+});
+
+//Sending data to clients
 // Every 1 second, sends a message to a random client:
 
 setInterval(function() {
@@ -51,12 +51,13 @@ setInterval(function() {
 
         randomClient = Math.floor(Math.random() * clients.length);
 
-        clients[randomClient].emit('foo', sequence++);
+        clients[randomClient].send( sequence++);
 
         if(sequence%10==0)
-		io.emit('foo','for all');
+	for(var connection in clients)
+		clients[connection].send("For All");
 
     }
 
 }, 1000);
-  
+

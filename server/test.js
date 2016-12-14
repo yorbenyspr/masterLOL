@@ -1,13 +1,18 @@
-var
+var WebSocketClient = require('../node_modules/websocket').client;
 
-    io = require('../node_modules/socket.io-client'),
+ 
 
-    ioClient = io.connect('ws://localhost:8082');
+var client = new WebSocketClient();
 
-
-
-ioClient.on('foo', function(msg) {
-
-    console.log(msg);
-
+client.on('connect',function(webSocketConnection){
+	console.log('Client connected');
+	webSocketConnection.on('message',function(message){
+		console.log('Message from server '+message.utf8Data);	
+	});
 });
+
+client.connect('ws://localhost:8081/', null);
+
+ 
+
+
