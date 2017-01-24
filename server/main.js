@@ -1,5 +1,7 @@
 var express = require('../node_modules/express');  
-
+var repository = require('../node_modules/db_connection');
+//var r=repository('mongodb://192.168.58.130:27017/test').setValue('persona/jean/hijos/amy',{test:'Test'});
+var r=repository('mongodb://192.168.58.130:27017/test').removeValue('persona/jean/hijos/amy');
 var app = express();  
 
 var server = require('http').Server(app);  
