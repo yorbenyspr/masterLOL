@@ -11,6 +11,7 @@
   "dependencies": {
     "express": "^4.14.0",
     "mongodb": "^2.2.11",
+    "simple-node-logger": "^0.93.17",
     "socket.io": "^1.7.1",
     "socket.io-client": "^1.7.1",
     "websocket": "^1.0.23"

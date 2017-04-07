@@ -1,7 +1,10 @@
 var express = require('../node_modules/express');  
 var repository = require('../node_modules/db_connection');
+var logger = require('../node_modules/simple-node-logger').createSimpleLogger('project.log');;
 //var r=repository('mongodb://192.168.58.130:27017/test').setValue('persona/jean/hijos/amy',{test:'Test'});
-var r=repository('mongodb://192.168.58.130:27017/test').removeValue('persona/jean/hijos/amy');
+var r=repository('mongodb://192.168.58.130:27017/test',logger);
+r.removeValue('persona/jean/hijos/amy');
+
 var app = express();  
 
 var server = require('http').Server(app);  
@@ -10,9 +13,7 @@ var WebSocketServer = require('../node_modules/websocket').server;
 var clients =[];
 var sequence =1;
 server.listen(8081, function() {  
-
-    console.log('Servidor corriendo en http://localhost:8081');
-
+	logger.info('Started server in http://localhost:8081');
 });
 //Creating websocket server
 var wServer= new WebSocketServer({httpServer: server,autoAcceptConnections:false});
@@ -20,13 +21,14 @@ var wServer= new WebSocketServer({httpServer: server,autoAcceptConnections:false
 wServer.on('request', function(webSocketRequest){
 	console.log('New Request');
 	webSocketRequest.accept();
+	logger.info('New request to MarterLol from client');
 
 });
 //Called when a client is connected
 wServer.on('connect', function(webSocketConnection){
 	console.log('New Connection');
 	clients.push(webSocketConnection);
-	
+	logger.info('New connection in MarterLol');
 });
 
 //Called when a client close the connection
@@ -36,7 +38,8 @@ wServer.on('close', function(webSocketConnection,closeReason,description){
 	if (index != -1) {
 
             clients.splice(index, 1);
-	    console.log('Closed Connection ' + closeReason +" "+ description);
+	    //console.log('Closed Connection ' + closeReason +" "+ description);
+	    logger.info('Closed Connection from MasterLol ' + closeReason +" "+ description);
 
         }
 	
@@ -54,11 +57,14 @@ setInterval(function() {
         randomClient = Math.floor(Math.random() * clients.length);
 
         clients[randomClient].send( sequence++);
-
+        logger.info('Sending message from MasterLol to client');
         if(sequence%10==0)
-	for(var connection in clients)
-		clients[connection].send("For All");
+        {
+        	for(var connection in clients)
+				clients[connection].send("For All");
 
+			logger.info('Sending message from MasterLol to all connected clients');
+        }
     }
 
 }, 1000);
