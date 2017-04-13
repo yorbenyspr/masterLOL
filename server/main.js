@@ -42,9 +42,12 @@ wServer.on('close', function(webSocketConnection,closeReason,description){
 	
 });
 
-//Sending data to clients
-// Every 1 second, sends a message to a random client:
-
+	/**
+    *
+    * @author Yorbenys
+    * Sending data to one client
+    * Every 10 second send data to all client
+    */
 setInterval(function() {
 
     var randomClient;
