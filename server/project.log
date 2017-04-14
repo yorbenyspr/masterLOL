@@ -1,0 +1,62 @@
+15:24:14.347 INFO  Started server in http://localhost:8081 
+15:24:20.558 INFO  New connection in MarterLol 
+15:24:20.558 INFO  New request to MarterLol from client 
+15:24:21.349 INFO  Sending message from MasterLol to client 
+15:24:22.351 INFO  Sending message from MasterLol to client 
+15:24:23.351 INFO  Sending message from MasterLol to client 
+15:24:24.351 INFO  Sending message from MasterLol to client 
+15:24:25.351 INFO  Sending message from MasterLol to client 
+15:24:26.352 INFO  Sending message from MasterLol to client 
+15:24:27.353 INFO  Sending message from MasterLol to client 
+15:24:28.354 INFO  Sending message from MasterLol to client 
+15:24:29.355 INFO  Sending message from MasterLol to client 
+15:24:29.355 INFO  Sending message from MasterLol to all connected clients 
+15:24:30.355 INFO  Sending message from MasterLol to client 
+15:24:31.355 INFO  Sending message from MasterLol to client 
+15:24:32.356 INFO  Sending message from MasterLol to client 
+15:24:33.357 INFO  Sending message from MasterLol to client 
+15:24:34.359 INFO  Sending message from MasterLol to client 
+15:24:35.363 ERROR Can't connect to mongodb://192.168.58.130:27017/test to remove value 
+15:24:35.365 INFO  Sending message from MasterLol to client 
+15:24:36.365 INFO  Sending message from MasterLol to client 
+15:24:37.367 INFO  Sending message from MasterLol to client 
+15:24:38.370 INFO  Sending message from MasterLol to client 
+15:24:39.372 INFO  Sending message from MasterLol to client 
+15:24:39.372 INFO  Sending message from MasterLol to all connected clients 
+15:24:40.372 INFO  Sending message from MasterLol to client 
+15:24:41.374 INFO  Sending message from MasterLol to client 
+15:24:42.375 INFO  Sending message from MasterLol to client 
+15:24:43.377 INFO  Sending message from MasterLol to client 
+15:24:44.383 INFO  Sending message from MasterLol to client 
+15:24:45.385 INFO  Sending message from MasterLol to client 
+15:24:46.386 INFO  Sending message from MasterLol to client 
+15:24:47.389 INFO  Sending message from MasterLol to client 
+15:24:48.395 INFO  Sending message from MasterLol to client 
+15:24:49.396 INFO  Sending message from MasterLol to client 
+15:24:49.397 INFO  Sending message from MasterLol to all connected clients 
+15:24:50.398 INFO  Sending message from MasterLol to client 
+15:24:51.399 INFO  Sending message from MasterLol to client 
+15:24:52.400 INFO  Sending message from MasterLol to client 
+15:24:53.401 INFO  Sending message from MasterLol to client 
+15:24:54.401 INFO  Sending message from MasterLol to client 
+15:24:55.403 INFO  Sending message from MasterLol to client 
+15:24:56.404 INFO  Sending message from MasterLol to client 
+15:24:57.406 INFO  Sending message from MasterLol to client 
+15:24:58.406 INFO  Sending message from MasterLol to client 
+15:24:59.407 INFO  Sending message from MasterLol to client 
+15:24:59.407 INFO  Sending message from MasterLol to all connected clients 
+15:25:00.408 INFO  Sending message from MasterLol to client 
+15:25:01.408 INFO  Sending message from MasterLol to client 
+15:25:02.409 INFO  Sending message from MasterLol to client 
+15:25:03.410 INFO  Sending message from MasterLol to client 
+15:25:04.411 INFO  Sending message from MasterLol to client 
+15:25:05.412 INFO  Sending message from MasterLol to client 
+15:25:06.413 INFO  Sending message from MasterLol to client 
+15:25:07.413 INFO  Sending message from MasterLol to client 
+15:25:08.413 INFO  Sending message from MasterLol to client 
+15:25:09.414 INFO  Sending message from MasterLol to client 
+15:25:09.414 INFO  Sending message from MasterLol to all connected clients 
+15:25:10.414 INFO  Sending message from MasterLol to client 
+15:25:11.416 INFO  Sending message from MasterLol to client 
+15:25:12.416 INFO  Sending message from MasterLol to client 
+15:25:13.415 INFO  Closed Connection from MasterLol 1006 Socket Error: read ECONNRESET 
