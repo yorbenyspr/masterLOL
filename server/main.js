@@ -1,10 +1,9 @@
 var express = require('../node_modules/express');  
 var repository = require('../node_modules/db_connection');
 var logger = require('../node_modules/simple-node-logger').createSimpleLogger('project.log');;
-//var r=repository('mongodb://192.168.58.130:27017/test').setValue('persona/jean/hijos/amy',{test:'Test'});
-var r=repository('mongodb://192.168.58.130:27017/test',logger);
-r.removeValue('persona/jean/hijos/amy');
-
+//var r=repository('mongodb://192.168.58.130:27017/test',logger).setValue('persona/jean/hijos/amy',{test:'TestAmy'});
+//var r=repository('mongodb://192.168.58.130:27017/test',logger).removeValue('persona');
+//var r=repository('mongodb://192.168.58.130:27017/test',logger).getValue('persona/jean',function(data,err){console.log(data);console.log(err);});
 var app = express();  
 
 var server = require('http').Server(app);  

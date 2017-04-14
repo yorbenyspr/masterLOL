@@ -60,3 +60,58 @@
 15:25:11.416 INFO  Sending message from MasterLol to client 
 15:25:12.416 INFO  Sending message from MasterLol to client 
 15:25:13.415 INFO  Closed Connection from MasterLol 1006 Socket Error: read ECONNRESET 
+11:36:24.859 INFO  Started server in http://localhost:8081 
+11:36:45.927 INFO  Started server in http://localhost:8081 
+11:36:45.959 ERROR Can't connect to mongodb://192.168.58.130:27017/test to set value 
+11:37:56.452 INFO  Started server in http://localhost:8081 
+11:37:56.487 ERROR Can't connect to mongodb://192.168.58.130:27017/test to set value 
+11:39:31.140 INFO  Started server in http://localhost:8081 
+11:39:31.360 INFO  Updated element persona 
+11:51:41.161 INFO  Started server in http://localhost:8081 
+11:52:44.116 INFO  Started server in http://localhost:8081 
+11:53:29.779 INFO  Started server in http://localhost:8081 
+11:54:16.852 INFO  Started server in http://localhost:8081 
+11:55:22.009 INFO  Started server in http://localhost:8081 
+11:55:22.091 INFO  Updated element  
+11:55:53.956 INFO  Started server in http://localhost:8081 
+11:56:13.949 INFO  Started server in http://localhost:8081 
+12:01:24.934 INFO  Started server in http://localhost:8081 
+12:01:25.012 INFO  Updated element  
+12:01:46.353 INFO  Started server in http://localhost:8081 
+12:02:13.661 INFO  Started server in http://localhost:8081 
+12:05:06.445 INFO  Started server in http://localhost:8081 
+12:05:06.512 INFO  Element deleted 
+12:05:48.851 INFO  Started server in http://localhost:8081 
+12:05:48.933 INFO  Element deleted 
+12:06:08.115 INFO  Started server in http://localhost:8081 
+12:06:08.179 INFO  Element deleted{"ok":1,"n":0} 
+12:07:15.618 INFO  Started server in http://localhost:8081 
+12:07:59.304 INFO  Started server in http://localhost:8081 
+12:07:59.390 INFO  Inserted element  
+12:08:22.273 INFO  Started server in http://localhost:8081 
+12:08:22.351 INFO  Updated element  
+12:08:53.745 INFO  Started server in http://localhost:8081 
+12:08:53.827 INFO  Updated element  
+12:09:11.082 INFO  Started server in http://localhost:8081 
+12:10:32.965 INFO  Started server in http://localhost:8081 
+12:11:06.274 INFO  Started server in http://localhost:8081 
+12:11:24.468 INFO  Started server in http://localhost:8081 
+12:11:30.377 INFO  Started server in http://localhost:8081 
+12:12:40.478 INFO  Started server in http://localhost:8081 
+12:12:40.557 INFO  Updated element  
+12:15:41.391 INFO  Started server in http://localhost:8081 
+12:15:41.474 INFO  Element deleted 
+12:16:28.447 INFO  Started server in http://localhost:8081 
+12:16:28.534 INFO  Inserted element  
+12:17:53.169 INFO  Started server in http://localhost:8081 
+12:17:53.272 INFO  Updated element  
+12:18:41.809 INFO  Started server in http://localhost:8081 
+12:18:41.887 INFO  Updated element  
+12:20:19.474 INFO  Started server in http://localhost:8081 
+12:20:19.553 INFO  Updated element  
+12:22:36.436 INFO  Started server in http://localhost:8081 
+12:22:36.499 INFO  Element deleted 
+12:23:00.929 INFO  Started server in http://localhost:8081 
+12:23:01.017 INFO  Inserted element  
+12:24:11.658 INFO  Started server in http://localhost:8081 
+12:24:11.734 INFO  Updated element  
