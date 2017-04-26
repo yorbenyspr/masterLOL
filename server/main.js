@@ -1,6 +1,15 @@
 var express = require('../node_modules/express');  
-var repository = require('../node_modules/db_connection');
-var logger = require('../node_modules/simple-node-logger').createSimpleLogger('project.log');;
+var repository = require('../app_modules/db_connection');
+var eventLayer = require('../app_modules/event_layer');
+var logger = require('../node_modules/simple-node-logger').createSimpleLogger('project.log');
+//Event Layer
+eventLayer.on('DataChange',DataChange);
+eventLayer.on('ChildAdded',ChildAdded);
+eventLayer.on('ChildChanged',ChildChanged);
+eventLayer.on('ChildRemoved',ChildRemoved);
+eventLayer.on('ChildMoved',ChildMoved);
+//End event
+repository('mongodb://192.168.58.130:27017/test',logger);
 //var r=repository('mongodb://192.168.58.130:27017/test',logger).setValue('persona/jean/hijos/amy',{test:'TestAmy'});
 //var r=repository('mongodb://192.168.58.130:27017/test',logger).removeValue('persona');
 //var r=repository('mongodb://192.168.58.130:27017/test',logger).getValue('persona/jean',function(data,err){console.log(data);console.log(err);});
@@ -43,7 +52,6 @@ wServer.on('close', function(webSocketConnection,closeReason,description){
         }
 	
 });
-
 	/**
     *
     * @author Yorbenys
@@ -71,3 +79,24 @@ setInterval(function() {
 
 }, 1000);
 
+///Events Functions
+
+function DataChange(jsonObject, url){
+    logger.info('DataChange');
+};
+
+function ChildAdded(jsonObject, url){
+    logger.info('ChildAdded');
+};
+
+function ChildChanged(jsonObject, url){
+    logger.info('ChildChanged');
+};
+
+function ChildRemoved(jsonObject, url){
+    logger.info('ChildRemoved');
+};
+
+function ChildMoved(jsonObject, url){
+    logger.info('ChildMoved');
+};

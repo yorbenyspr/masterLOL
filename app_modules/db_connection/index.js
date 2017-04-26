@@ -52,7 +52,8 @@ var createObject = function(arrE,jsonData,insertIn)//Crea la estructura de objet
     }
 	return parent;
 };
-var mongoClient = require('../mongodb');
+var mongoClient = require('../../node_modules/mongodb');
+var eventLayer = require('../event_layer')
 module.exports = function(dbUrl,logger){
 	/**
 	*
@@ -87,7 +88,10 @@ module.exports = function(dbUrl,logger){
                             		if(err != null)
                             			logger.error("Can't Update the element ", parent._id);
                             		else
+                            		{
                             			logger.info("Updated element ");
+                            			eventLayer.emit('DataChanged',jsonObject,url);
+                            		}
 
                             });
 						}
@@ -111,15 +115,29 @@ module.exports = function(dbUrl,logger){
 		 						}
 								
 							}
+							var childAdded = false;
 							if(arrE.length==0)//Hoja encontrada
                             	objAux.jsonData=jsonObject;
                             else
+                            {
                             	createObject(arrE,jsonObject,objAux); //Hay que crear los elementos
+                            	childAdded = true;
+                            }
                             db.collection('url').update({_id:parent._id},{$set:parent},function(err, result){
                             		if(err != null)
                             			logger.error("Can't Update the element ", parent._id);
                             		else
+                            		{
                             			logger.info("Updated element ");
+                            			if(childAdded)
+                            			{
+                            				eventLayer.emit('ChildAdded',jsonObject,url);
+                            			}
+                            			else
+                            			{
+                            				eventLayer.emit('DataChanged',jsonObject,url);
+                            			}
+                            		}
 
                             });
 							
@@ -141,7 +159,10 @@ module.exports = function(dbUrl,logger){
 									return;
 								}
 								else
+								{
 									logger.info("Inserted element ");
+									eventLayer.emit('ChildAdded',jsonObject,url);
+								}
 							});
 						}
 					}
@@ -179,6 +200,7 @@ module.exports = function(dbUrl,logger){
                     		else
                     		{
                     			logger.info("Element deleted");
+                    			eventLayer.emit('ChildRemoved',jsonObject,url);
                     			return;
                     		}
                     	});
@@ -213,7 +235,10 @@ module.exports = function(dbUrl,logger){
                             			logger.error("Can't update element");
                             		}
                             		else
- 										logger.info("Updated element");	                           			
+                            		{
+ 										logger.info("Updated element");
+ 										eventLayer.emit('ChildRemoved',jsonObject,url);	                           			
+                            		}
 
                             		});
 								}
