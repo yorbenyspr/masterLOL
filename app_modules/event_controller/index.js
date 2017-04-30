@@ -2,7 +2,7 @@ var eventLayer = require('../event_layer')
 var logger = require('../../node_modules/simple-node-logger').createSimpleLogger('project.log');
 var EventController = function(){
 		var clients = new Map();
-		this.subscrite = function(clientObject,eventName,url)
+		this.subscribe = function(clientObject,eventName,url)
 		{
 			if(typeof(clients.get(clientObject)) === 'undefined')
 			{
@@ -24,15 +24,15 @@ var EventController = function(){
 				}
 			}
 		};
-		this.unsubscrite = function(clientObject,eventName,url)
+		this.unsubscribe = function(clientObject,eventName,url)
 		{
 			if(eventName === 'all')// Erase all event from that object
 			{
-				clients.remove(clientObject);
+				clients.delete(clientObject);
 			}
 			else if(url === 'all')// Erase all url from that client 
 			{
-				clients.get(clientObject).remove(eventName);
+				clients.get(clientObject).delete(eventName);
 			}
 			else //Erase that url from that event
 			{
