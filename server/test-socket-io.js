@@ -6,8 +6,8 @@ var
 
 
 ioClient.emit('subscribe','DataChange','/test/url');
-ioClient.on('foo', function(msg) {
+ioClient.on('DataChange', function(jsonObject,url) {
 
-    console.log(msg);
-
+    console.log(jsonObject);
+    console.log(url);
 });
