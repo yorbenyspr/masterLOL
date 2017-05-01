@@ -19,8 +19,11 @@ var EventController = function(){
 				else
 				{
 					var urls = clients.get(clientObject).get(eventName);
-					urls.push(url);
-					clients.get(clientObject).set(eventName,urls);
+					if(urls.indexOf(url) < 0)
+					{
+						urls.push(url);
+						clients.get(clientObject).set(eventName,urls);
+					}
 				}
 			}
 		};
