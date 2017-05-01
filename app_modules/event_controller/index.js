@@ -52,7 +52,7 @@ var EventController = function(){
 				{
   					if(typeof(value.get(eventName)) !== 'undefined')
   					{
-  						if(value.get(eventName).indexOf(url) > -1)
+  						if(typeof(value.get(eventName)) !== 'undefined' && value.get(eventName).indexOf(url) > -1)
   						{
 
   							key.emit(eventName,jsonObject,url);
