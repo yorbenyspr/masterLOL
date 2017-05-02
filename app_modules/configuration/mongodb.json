@@ -1,0 +1,7 @@
+{
+	"server": "192.168.58.130",
+	"protocol": "mongodb",
+	"port": 27017,
+	"endPoint": "test",
+	"url": "mongodb://192.168.58.130:27017/test"
+}

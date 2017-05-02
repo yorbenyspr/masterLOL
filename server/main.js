@@ -1,11 +1,12 @@
-var express = require('../node_modules/express');  
-var repository = require('../app_modules/db_connection');
+var express = require('../node_modules/express');
+var confManager = require('../app_modules/configuration');  
+var repository = require('../app_modules/db_connection')(confManager.getMongoServerUrl());
 var logger = require('../node_modules/simple-node-logger').createSimpleLogger('project.log');
 var eventController = require('../app_modules/event_controller');
-repository('mongodb://192.168.58.130:27017/test',logger);
-//var r=repository('mongodb://192.168.58.130:27017/test',logger).setValue('persona/jean/hijos/amy',{test:'TestAmy'});
-//var r=repository('mongodb://192.168.58.130:27017/test',logger).removeValue('persona');
-//var r=repository('mongodb://192.168.58.130:27017/test',logger).getValue('persona/jean',function(data,err){console.log(data);console.log(err);});
+//repository.setValue('persona/jean/hijos/amy',{test:'TestAmy'});
+//repository.setValue('persona/jean/hijos/amy',{test:'TestAmy'});
+//repository.removeValue('persona');
+//repository.getValue('persona/jean',function(data,err){console.log(data);console.log(err);});
 var app = express();  
 
 var server = require('http').Server(app);  

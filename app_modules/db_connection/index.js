@@ -53,8 +53,9 @@ var createObject = function(arrE,jsonData,insertIn)//Crea la estructura de objet
 	return parent;
 };
 var mongoClient = require('../../node_modules/mongodb');
-var eventLayer = require('../event_layer')
-module.exports = function(dbUrl,logger){
+var eventLayer = require('../event_layer');
+var logger = require('../../node_modules/simple-node-logger').createSimpleLogger('project.log');
+module.exports = function(dbUrl){
 	/**
 	*
 	* @author Yorbenys

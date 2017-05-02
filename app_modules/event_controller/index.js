@@ -29,20 +29,26 @@ var EventController = function(){
 		};
 		this.unsubscribe = function(clientObject,eventName,url)
 		{
-			if(eventName === 'all')// Erase all event from that object
+			try
 			{
-				clients.delete(clientObject);
+				if(eventName === 'all')// Erase all event from that object
+				{
+					clients.delete(clientObject);
+				}
+				else if(url === 'all')// Erase all url from that client 
+				{
+					clients.get(clientObject).delete(eventName);
+				}
+				else //Erase that url from that event
+				{
+					var urls = clients.get(clientObject).get(eventName);
+					urls.splice(arrE.indexOf(url),1);
+					clients.get(clientObject).set(eventName,urls);
+				}
 			}
-			else if(url === 'all')// Erase all url from that client 
+			catch(e)
 			{
-				clients.get(clientObject).delete(eventName);
-			}
-			else //Erase that url from that event
-			{
-				var urls = clients.get(clientObject).get(eventName);
-				urls.splice(arrE.indexOf(url),1);
-				clients.get(clientObject).set(eventName,urls);
-
+				logger.error('Error unsubscribing client from MasterLol. Exception: ',e);
 			}
 		};
 		var sendEventToClients = function(eventName,jsonObject,url)
