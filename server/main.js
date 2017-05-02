@@ -1,10 +1,10 @@
 var express = require('../node_modules/express');
 var confManager = require('../app_modules/configuration');  
 var repository = require('../app_modules/db_connection')(confManager.getMongoServerUrl());
-var logger = require('../node_modules/simple-node-logger').createSimpleLogger('project.log');
+var logger = require('../app_modules/logger');
 var eventController = require('../app_modules/event_controller');
 //repository.setValue('persona/jean/hijos/amy',{test:'TestAmy'});
-//repository.setValue('persona/jean/hijos/amy',{test:'TestAmy'});
+//repository.setValue('persona/jean',{test:'TestJean'});
 //repository.removeValue('persona');
 //repository.getValue('persona/jean',function(data,err){console.log(data);console.log(err);});
 var app = express();  

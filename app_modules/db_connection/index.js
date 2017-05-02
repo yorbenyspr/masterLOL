@@ -54,7 +54,7 @@ var createObject = function(arrE,jsonData,insertIn)//Crea la estructura de objet
 };
 var mongoClient = require('../../node_modules/mongodb');
 var eventLayer = require('../event_layer');
-var logger = require('../../node_modules/simple-node-logger').createSimpleLogger('project.log');
+var logger = require('../logger');
 module.exports = function(dbUrl){
 	/**
 	*
@@ -262,11 +262,13 @@ module.exports = function(dbUrl){
 		mongoClient.connect(dbUrl,function(err,db){
 					if(err != null)
 					{
-						logger.error("Can't connect to ", dbUrl, ' to remove value');
+						logger.error("Can't connect to ", dbUrl, ' to get value');
 						try
 						{
 							callbackFunc(null,err);
-						}catch(e){}
+						}catch(e){
+							logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
+						}
 						return;
 					}
 					logger.info("Success connection to ", dbUrl);
@@ -280,7 +282,9 @@ module.exports = function(dbUrl){
                             	try
 								{
 									callbackFunc(null,err);
-								}catch(e){}
+								}catch(e){
+									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
+								}
 								return;
                     		}
                             var obj=result;
@@ -301,7 +305,9 @@ module.exports = function(dbUrl){
 									try
 									{
 										callbackFunc(obj.obj.jsonData,null);
-									}catch(e){}
+									}catch(e){
+										logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
+									}
 									return;
 								}
 								else
@@ -309,7 +315,9 @@ module.exports = function(dbUrl){
 									try
 									{
 										callbackFunc({},"Not Found");
-									}catch(e){}
+									}catch(e){
+										logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
+									}
 									return;
 								}
 							}
@@ -318,7 +326,9 @@ module.exports = function(dbUrl){
 								try
 								{
 									callbackFunc(obj.jsonData,err);
-								}catch(e){}
+								}catch(e){
+									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
+								}
 								return;
 							}
 							else
@@ -326,7 +336,9 @@ module.exports = function(dbUrl){
 								try
 								{
 									callbackFunc(null,"Not Found");
-								}catch(e){}
+								}catch(e){
+									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
+								}
 								return;
 							}
 						});
@@ -336,7 +348,9 @@ module.exports = function(dbUrl){
                     	try
 						{
 							callbackFunc(null,"Bad url");
-						}catch(e){}
+						}catch(e){
+							logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
+						}
 						return;
                     }
 

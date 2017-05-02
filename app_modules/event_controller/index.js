@@ -1,5 +1,5 @@
 var eventLayer = require('../event_layer')
-var logger = require('../../node_modules/simple-node-logger').createSimpleLogger('project.log');
+var logger = require('../logger');
 var EventController = function(){
 		var clients = new Map();
 		this.subscribe = function(clientObject,eventName,url)
@@ -48,7 +48,7 @@ var EventController = function(){
 			}
 			catch(e)
 			{
-				logger.error('Error unsubscribing client from MasterLol. Exception: ',e);
+				logger.error('Error unsubscribing client from MasterLol. Exception: ',e,'. Module "event_controller" function unsubscribe');
 			}
 		};
 		var sendEventToClients = function(eventName,jsonObject,url)
@@ -68,7 +68,7 @@ var EventController = function(){
   				}
   				catch(e)
   				{
-  					logger.error('Error sending message from MasterLol to client. Exception: ',e);
+  					logger.error('Error sending message from MasterLol to client. Exception: ',e,'. Module "event_controller" function sendEventToClients');
   				}
 				});
 		};
