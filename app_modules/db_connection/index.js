@@ -68,6 +68,7 @@ module.exports = function(dbUrl){
 				logger.error("Can't connect to ", dbUrl, ' to set value');
 				return;
 			}
+			logger.info("Success connection to ", dbUrl);
 			var arrE = getArrayFromUrl(url);
 			if(arrE.length >0)
 			{
@@ -189,6 +190,7 @@ module.exports = function(dbUrl){
 						logger.error("Can't connect to ", dbUrl, ' to remove value');
 						return;
 					}
+					logger.info("Success connection to ", dbUrl);
                     var arrE =getArrayFromUrl(url);
                     if(arrE.length==1)//Eliminar el elemento root
                     {
@@ -267,6 +269,7 @@ module.exports = function(dbUrl){
 						}catch(e){}
 						return;
 					}
+					logger.info("Success connection to ", dbUrl);
                     var arrE =getArrayFromUrl(url);
                     if(arrE.length>0)
                     {
