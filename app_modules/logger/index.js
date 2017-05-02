@@ -19,6 +19,11 @@ var Logger =  function()
 	{
 		logger.error.apply(logger,arguments);
 	};
+
+	this.unhandledException = function(err)
+	{
+		logger.error('An unhandeld exception occur. Exception: ',err);
+	};
 };
 
 var loggerM = new Logger();

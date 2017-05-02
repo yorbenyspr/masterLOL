@@ -38,3 +38,5 @@ io.on('connection', function(socket) {
     });
 
 });
+//When an exception is unhandled call the function 'unhandledException' in 'logger' module  
+process.on('uncaughtException', logger.unhandledException);
