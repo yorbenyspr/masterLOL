@@ -22,7 +22,7 @@ var Logger =  function()
 
 	this.unhandledException = function(err)
 	{
-		logger.error('An unhandeld exception occur. Exception: ',err);
+		logger.error('An unhandled exception occur. Exception: ',err);
 	};
 };
 
