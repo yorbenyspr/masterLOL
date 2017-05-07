@@ -60,12 +60,19 @@ module.exports = function(dbUrl){
 	*
 	* @author Yorbenys
 	* Create a tree with url representation
+	* A 3th parameter can be passed as 3 that indicate that an event is send if occours an error creating the three
 	*/
 	this.setValue=function(url,jsonObject){
+			var emitEventOnError = false;
+			var socket = arguments[3];
+			if(typeof(arguments[2]!=='undefined' && arguments[2] === true))
+				emitEventOnError = true;
 			mongoClient.connect(dbUrl,function(err,db){
 			if(err != null)
 			{
 				logger.error("Can't connect to ", dbUrl, ' to set value');
+				if(emitEventOnError)
+					eventLayer.emit('ErrorCreatingURL',url,socket);
 				return;
 			}
 			logger.info("Success connection to ", dbUrl);
@@ -77,6 +84,8 @@ module.exports = function(dbUrl){
 					if(err != null)
 					{
 						logger.error("Can't find the element ", root);
+						if(emitEventOnError)
+							eventLayer.emit('ErrorCreatingURL',url,socket);
 						return;
 					}
 					if(document != null)
@@ -88,7 +97,11 @@ module.exports = function(dbUrl){
 							parent.jsonData=jsonObject;
 							db.collection('url').update({_id:parent._id},{$set:parent},function(err, result){
                             		if(err != null)
+                            		{
                             			logger.error("Can't Update the element ", parent._id);
+                            			if(emitEventOnError)
+											eventLayer.emit('ErrorCreatingURL',url,socket);
+                            		}
                             		else
                             		{
                             			logger.info("Updated element ");
@@ -127,7 +140,11 @@ module.exports = function(dbUrl){
                             }
                             db.collection('url').update({_id:parent._id},{$set:parent},function(err, result){
                             		if(err != null)
+                            		{
                             			logger.error("Can't Update the element ", parent._id);
+                            			if(emitEventOnError)
+											eventLayer.emit('ErrorCreatingURL',url,socket);
+                            		}
                             		else
                             		{
                             			logger.info("Updated element ");
@@ -158,12 +175,14 @@ module.exports = function(dbUrl){
 								if(err != null)
 								{
 									logger.error("Can't insert the element ");
+									if(emitEventOnError)
+										eventLayer.emit('ErrorCreatingURL',url,socket);
 									return;
 								}
 								else
 								{
 									logger.info("Inserted element ");
-									eventLayer.emit('ChildAdded',jsonObject,url);
+									eventLayer.emit('ChildAdded',jsonObject,url,socket);
 								}
 							});
 						}
@@ -355,6 +374,65 @@ module.exports = function(dbUrl){
                     }
 
                 });
+
+	};
+	//Create an url if not exists
+	this.createIfNotExists = function(url,socket){
+		mongoClient.connect(dbUrl,function(err,db){
+			if(err != null)
+			{
+				logger.error("Can't connect to ", dbUrl, ' to set value');
+				eventLayer.emit('ErrorCreatingURL',url,socket);
+				return;
+			}
+			logger.info("Success connection to ", dbUrl);
+			var arrE = getArrayFromUrl(url);
+			if(arrE.length >0)
+			{
+				var root= arrE.splice(0,1)[0];
+				db.collection('url').findOne({_id:root},function(err,document){
+					if(err != null)
+					{
+						logger.error("Can't find the element ", root);
+						eventLayer.emit('ErrorCreatingURL',url,socket);
+						return;
+					}
+					var createUrl = false;
+					if(document == null)
+					{
+						createUrl = true;
+					}
+					else
+					{
+						var obj={'obj':document,index:0,ar:document.childrens};
+						while(obj != null)
+						{
+							if(obj.obj._id === arrE[arrE.length-1])
+							{
+								arrE.splice(0,1);
+								break;
+							}
+							obj=findElement(obj.obj.childrens,arrE[0]);
+							if(obj != null)
+							{
+								if(arrE.length>1)
+		 							arrE.splice(0,1);
+		 					}
+								
+						}
+						if(arrE.length!=0)
+							createUrl = true;
+					}
+
+					if(createUrl)
+					{
+						logger.info("Creating url: ",url);
+						this.setValue(url,null,true,socket);
+					}
+
+				});
+			}
+		});
 
 	};				
         return this;

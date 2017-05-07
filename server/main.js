@@ -28,6 +28,7 @@ io.on('connection', function(socket) {
     });
 
     socket.on('subscribe', function(eventName,url) {
+        repository.createIfNotExists(url,socket.id);
         eventController.subscribe(socket,eventName,url);
         logger.info('Client subscribe to event ',eventName,' for url ',url,' client id ',socket.id);
     });

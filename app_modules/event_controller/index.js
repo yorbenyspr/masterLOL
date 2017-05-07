@@ -97,12 +97,31 @@ var EventController = function(){
 	    	sendEventToClients('ChildMoved',jsonObject,url);
 	    };
 
+	    this.ErrorCreatingURL = function(url,socket)
+	    {
+	    	clients.forEach(function(value, key) {
+	    		try
+	    		{
+	    			if(key.id === socket)
+	    			{
+	    				key.error('Error creating URL: ' + url);
+	    				logger.info('Sending error from MasterLol to client');
+	    			}
+	    		}
+	    		catch(e)
+	    		{
+	    			logger.error('Error sending message from MasterLol to client. Exception: ',e,'. Module "event_controller" function ErrorCreatingURL');
+	    		}
+	        });
+	    };
+
 	    //Event Layer
 	eventLayer.on('DataChange',this.DataChange);
 	eventLayer.on('ChildAdded',this.ChildAdded);
 	eventLayer.on('ChildChanged',this.ChildChanged);
 	eventLayer.on('ChildRemoved',this.ChildRemoved);
 	eventLayer.on('ChildMoved',this.ChildMoved);
+	eventLayer.on('ErrorCreatingURL',this.ErrorCreatingURL);
 	//End event
 };
 
