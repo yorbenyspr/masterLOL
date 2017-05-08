@@ -74,31 +74,37 @@ var EventController = function(){
 		};
 	    this.DataChange = function(jsonObject, url)
 	    {
+	    	logger.info('Triggered DataChange Event');
 	    	sendEventToClients('DataChange',jsonObject,url);
 	    };
 
 	    this.ChildAdded = function(jsonObject, url)
 	    {
+	    	logger.info('Triggered ChildAdded Event');
 	    	sendEventToClients('ChildAdded',jsonObject,url);
 	    };
 
 	    this.ChildChanged = function(jsonObject, url)
 	    {
+	    	logger.info('Triggered ChildChanged Event');
 	    	sendEventToClients('ChildChanged',jsonObject,url);
 	    };
 
 	    this.ChildRemoved = function(jsonObject, url)
 	    {
+	    	logger.info('Triggered ChildRemoved Event');
 	    	sendEventToClients('ChildRemoved',jsonObject,url);
 	    };
 
 	    this.ChildMoved = function(jsonObject, url)
 	    {
+	    	logger.info('Triggered ChildMoved Event');
 	    	sendEventToClients('ChildMoved',jsonObject,url);
 	    };
 
 	    this.ErrorCreatingURL = function(url,socket)
 	    {
+	    	logger.info('Triggered ErrorCreatingURL Event');
 	    	clients.forEach(function(value, key) {
 	    		try
 	    		{
