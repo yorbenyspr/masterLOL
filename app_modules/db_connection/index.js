@@ -6,10 +6,12 @@
 var getArrayFromUrl = function(url)
 {
 	var arrE = url.split('/');
-			while(arrE.indexOf("")!=-1 || arrE.indexOf("") != -1 )
+			while(arrE.indexOf("")!=-1 || arrE.indexOf(" ") != -1 )
 			{
-				arrE.splice(arrE.indexOf(""),1);//Quitando string vacios
-				arrE.splice(arrE.indexOf(" "),1);//Quitando string que solo es un espacio en blanco
+				if(arrE.indexOf("")!=-1)
+					arrE.splice(arrE.indexOf(""),1);//Quitando string vacios
+				else if(arrE.indexOf(" ") != -1)
+					arrE.splice(arrE.indexOf(" "),1);//Quitando string que solo es un espacio en blanco
 			}
 	return arrE;
 };
