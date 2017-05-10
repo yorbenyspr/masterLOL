@@ -10,13 +10,31 @@ var eventController = require('../app_modules/event_controller');
 var app = express();  
 
 var server = require('http').Server(app);  
-var io = require('../node_modules/socket.io')(server);
+var WebSocketServer = require('../node_modules/websocket').server;
 server.listen(8081, function() {  
-
     logger.info('Started server in http://localhost:8081');
+});
+//Creating websocket server
+var wServer= new WebSocketServer({httpServer: server,autoAcceptConnections:false});
+//Used for accept or reject connections
+wServer.on('request', function(webSocketRequest){
+    webSocketRequest.accept();
+    logger.info('New request to MarterLol from client');
 
 });
+//Called when a client is connected
+wServer.on('connect', function(webSocketConnection){
+    logger.info('New connection in MarterLol');
+    webSocketConnection.on('message',function(message){
+        console.log('Message from client '+message.utf8Data);   
+    });
+});
 
+//Called when a client close the connection
+wServer.on('close', function(webSocketConnection,closeReason,description){
+        logger.info('Closed Connection from MasterLol ' + closeReason +" "+ description); 
+});
+/*
 // Event fired every time a new client connects:
 io.on('connection', function(socket) {
 
@@ -41,3 +59,4 @@ io.on('connection', function(socket) {
 });
 //When an exception is unhandled call the function 'unhandledException' in 'logger' module  
 process.on('uncaughtException', logger.unhandledException);
+*/
