@@ -29,7 +29,10 @@ wServer.on('connect', function(webSocketConnection){
     clientConnectionId++;
     logger.info('New connection in MarterLol, client id: ', webSocketConnection['id']);
     webSocketConnection.on('message',function(message){
-        console.log('Message from client '+message.utf8Data);   
+        console.log('Message from client id: ',webSocketConnection['id'], 'message: ', message.utf8Data);
+        //Converting the string message to jsonrpc object
+        var data = message.utf8Data;
+        reciveMessageFromClient(webSocketConnection,data);
     });
 });
 
@@ -38,6 +41,37 @@ wServer.on('close', function(webSocketConnection,closeReason,description){
         clientConnectionId--;
         logger.info('Closed Connection from MasterLol ' + closeReason +" "+ description," client id: ", webSocketConnection['id']); 
 });
+
+function reciveMessageFromClient(socket,data){
+    try
+    {
+        var jsonrpc = JSON.parse(data);
+        if(jsonrpc['jsonrpc'] === "2.0")//Only accept jsonrpc v 2.0
+        {
+            jsonrpc.params.unshift(socket);
+            var methodName= jsonrpc.method;
+            global[methodName].apply(global,jsonrpc.params);
+        }
+
+    } 
+    catch(e)
+    {
+        logger.error('Error reading jsonrpc. Exception: ',e,'. Module "main" on function "reciveMessageFromClient"');
+    } 
+};
+global["subscribe"]=function (socket,eventName,url){
+    repository.createIfNotExists(url,socket.id);
+    eventController.subscribe(socket,eventName,url);
+    logger.info('Client subscribe to event ',eventName,' for url ',url,' client id ',socket.id);
+};
+
+global["unsubscribe"]=function (socket,eventName,url){
+    eventController.unsubscribe(socket,eventName,url);
+    logger.info('Client unsubscribe from event ',eventName,' for url ',url,' client id ',socket.id);
+};
+
+//When an exception is unhandled call the function 'unhandledException' in 'logger' module  
+process.on('uncaughtException', logger.unhandledException);
 /*
 // Event fired every time a new client connects:
 io.on('connection', function(socket) {

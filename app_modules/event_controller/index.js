@@ -42,7 +42,7 @@ var EventController = function(){
 				else //Erase that url from that event
 				{
 					var urls = clients.get(clientObject).get(eventName);
-					urls.splice(arrE.indexOf(url),1);
+					urls.splice(urls.indexOf(url),1);
 					clients.get(clientObject).set(eventName,urls);
 				}
 			}
