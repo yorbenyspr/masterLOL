@@ -15,6 +15,7 @@ server.listen(8081, function() {
     logger.info('Started server in http://localhost:8081');
 });
 //Creating websocket server
+var clientConnectionId= 1;
 var wServer= new WebSocketServer({httpServer: server,autoAcceptConnections:false});
 //Used for accept or reject connections
 wServer.on('request', function(webSocketRequest){
@@ -24,7 +25,9 @@ wServer.on('request', function(webSocketRequest){
 });
 //Called when a client is connected
 wServer.on('connect', function(webSocketConnection){
-    logger.info('New connection in MarterLol');
+    webSocketConnection['id']=clientConnectionId;
+    clientConnectionId++;
+    logger.info('New connection in MarterLol, client id: ', webSocketConnection['id']);
     webSocketConnection.on('message',function(message){
         console.log('Message from client '+message.utf8Data);   
     });
@@ -32,7 +35,8 @@ wServer.on('connect', function(webSocketConnection){
 
 //Called when a client close the connection
 wServer.on('close', function(webSocketConnection,closeReason,description){
-        logger.info('Closed Connection from MasterLol ' + closeReason +" "+ description); 
+        clientConnectionId--;
+        logger.info('Closed Connection from MasterLol ' + closeReason +" "+ description," client id: ", webSocketConnection['id']); 
 });
 /*
 // Event fired every time a new client connects:
