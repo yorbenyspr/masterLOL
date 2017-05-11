@@ -279,14 +279,14 @@ module.exports = function(dbUrl){
 	* Get Value for an element
 	* The callbackFunc is called with two params "data,error"
 	*/
-	this.getValue= function(url,callbackFunc){
+	this.getValue= function(url,socketID,requestID){
 		mongoClient.connect(dbUrl,function(err,db){
 					if(err != null)
 					{
 						logger.error("Can't connect to ", dbUrl, ' to get value');
 						try
 						{
-							callbackFunc(null,err);
+							eventLayer.emit('GetValueResult',socketID,requestID,url,null,err);
 						}catch(e){
 							logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 						}
@@ -302,7 +302,7 @@ module.exports = function(dbUrl){
                             	logger.error("Can't find ",arrE[0]);
                             	try
 								{
-									callbackFunc(null,err);
+									eventLayer.emit('GetValueResult',socketID,requestID,url,null,err);
 								}catch(e){
 									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 								}
@@ -325,7 +325,7 @@ module.exports = function(dbUrl){
 								{
 									try
 									{
-										callbackFunc(obj.obj.jsonData,null);
+										eventLayer.emit('GetValueResult',socketID,requestID,url,obj.obj.jsonData,null);
 									}catch(e){
 										logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 									}
@@ -335,7 +335,7 @@ module.exports = function(dbUrl){
 								{
 									try
 									{
-										callbackFunc({},"Not Found");
+										eventLayer.emit('GetValueResult',socketID,requestID,url,{},"Not Found");
 									}catch(e){
 										logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 									}
@@ -346,7 +346,7 @@ module.exports = function(dbUrl){
 							{
 								try
 								{
-									callbackFunc(obj.jsonData,err);
+									eventLayer.emit('GetValueResult',socketID,requestID,url,obj.jsonData,null);
 								}catch(e){
 									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 								}
@@ -356,7 +356,7 @@ module.exports = function(dbUrl){
 							{
 								try
 								{
-									callbackFunc(null,"Not Found");
+									eventLayer.emit('GetValueResult',socketID,requestID,url,null,"Not Found");
 								}catch(e){
 									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 								}
@@ -368,7 +368,7 @@ module.exports = function(dbUrl){
                     {
                     	try
 						{
-							callbackFunc(null,"Bad url");
+							eventLayer.emit('GetValueResult',socketID,requestID,url,null,"Bad url");
 						}catch(e){
 							logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 						}

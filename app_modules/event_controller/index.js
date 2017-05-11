@@ -60,8 +60,9 @@ var EventController = function(){
   					{
   						if(typeof(value.get(eventName)) !== 'undefined' && value.get(eventName).indexOf(url) > -1)
   						{
-
-  							key.emit(eventName,jsonObject,url);
+  							var jsonRPC = {"jsonrpc": "2.0", "method": eventName, "params": [jsonObject, url]};
+  							var strindRep = JSON.stringify(jsonRPC);
+  							key.send(strindRep);
   							logger.info('Sending message from MasterLol to client');
   						}
   					}
@@ -75,31 +76,54 @@ var EventController = function(){
 	    this.DataChange = function(jsonObject, url)
 	    {
 	    	logger.info('Triggered DataChange Event');
-	    	sendEventToClients('DataChange',jsonObject,url);
+	    	sendEventToClients('onDataChange',jsonObject,url);
 	    };
 
 	    this.ChildAdded = function(jsonObject, url)
 	    {
 	    	logger.info('Triggered ChildAdded Event');
-	    	sendEventToClients('ChildAdded',jsonObject,url);
+	    	sendEventToClients('onChildAdded',jsonObject,url);
 	    };
 
 	    this.ChildChanged = function(jsonObject, url)
 	    {
 	    	logger.info('Triggered ChildChanged Event');
-	    	sendEventToClients('ChildChanged',jsonObject,url);
+	    	sendEventToClients('onChildChanged',jsonObject,url);
 	    };
 
 	    this.ChildRemoved = function(jsonObject, url)
 	    {
 	    	logger.info('Triggered ChildRemoved Event');
-	    	sendEventToClients('ChildRemoved',jsonObject,url);
+	    	sendEventToClients('onChildRemoved',jsonObject,url);
 	    };
 
 	    this.ChildMoved = function(jsonObject, url)
 	    {
 	    	logger.info('Triggered ChildMoved Event');
-	    	sendEventToClients('ChildMoved',jsonObject,url);
+	    	sendEventToClients('onChildMoved',jsonObject,url);
+	    };
+
+	    this.GetValueResult = function(socketID,requestID,url,result,error)
+	    {
+	    	logger.info('Triggered GetValueResult Event');
+	    	clients.forEach(function(value, key) {
+	    		try
+	    		{
+	    			if(key.id === socketID)
+	    			{
+	    				var jsonRPC = {"jsonrpc": "2.0", "result": result, "id": requestID};
+	    				if(error)
+	    					jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Error getting value for url: " + url}, "id": requestID};
+  						var strindRep = JSON.stringify(jsonRPC);
+  						key.send(strindRep);
+	    				logger.info('Sending result from MasterLol to client');
+	    			}
+	    		}
+	    		catch(e)
+	    		{
+	    			logger.error('Error sending message from MasterLol to client. Exception: ',e,'. Module "event_controller" function GetValueResult');
+	    		}
+	        });
 	    };
 
 	    this.ErrorCreatingURL = function(url,socket)
@@ -110,7 +134,9 @@ var EventController = function(){
 	    		{
 	    			if(key.id === socket)
 	    			{
-	    				key.error('Error creating URL: ' + url);
+	    				var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": 'Error creating URL: ' + url}, "id": null};
+  						var strindRep = JSON.stringify(jsonRPC);
+  						key.send(strindRep);
 	    				logger.info('Sending error from MasterLol to client');
 	    			}
 	    		}
@@ -128,6 +154,7 @@ var EventController = function(){
 	eventLayer.on('ChildRemoved',this.ChildRemoved);
 	eventLayer.on('ChildMoved',this.ChildMoved);
 	eventLayer.on('ErrorCreatingURL',this.ErrorCreatingURL);
+	eventLayer.on('GetValueResult',this.GetValueResult);
 	//End event
 };
 

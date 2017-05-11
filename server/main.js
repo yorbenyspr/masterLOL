@@ -1,12 +1,7 @@
 var express = require('../node_modules/express');
 var confManager = require('../app_modules/configuration');  
-var repository = require('../app_modules/db_connection')(confManager.getMongoServerUrl());
+var urlController = require('../app_modules/url_controller');
 var logger = require('../app_modules/logger');
-var eventController = require('../app_modules/event_controller');
-//repository.setValue('persona/jean/hijos/amy',{test:'TestAmy'});
-//repository.setValue('persona/jean',{test:'TestJean'});
-//repository.removeValue('persona');
-//repository.getValue('persona/jean',function(data,err){console.log(data);console.log(err);});
 var app = express();  
 
 var server = require('http').Server(app);  
@@ -36,65 +31,15 @@ wServer.on('connect', function(webSocketConnection){
     });
 });
 
-//Called when a client close the connection
+//Called when a client close the connection. I a client were disconnected from server unsubscribe that client from all event
 wServer.on('close', function(webSocketConnection,closeReason,description){
         clientConnectionId--;
-        logger.info('Closed Connection from MasterLol ' + closeReason +" "+ description," client id: ", webSocketConnection['id']); 
+        logger.info('Closed Connection from MasterLol ' + closeReason +" "+ description," client id: ", webSocketConnection['id']);
+        urlController.unsubscribe(socket,"all","all"); 
 });
 
 function reciveMessageFromClient(socket,data){
-    try
-    {
-        var jsonrpc = JSON.parse(data);
-        if(jsonrpc['jsonrpc'] === "2.0")//Only accept jsonrpc v 2.0
-        {
-            jsonrpc.params.unshift(socket);
-            var methodName= jsonrpc.method;
-            global[methodName].apply(global,jsonrpc.params);
-        }
-
-    } 
-    catch(e)
-    {
-        logger.error('Error reading jsonrpc. Exception: ',e,'. Module "main" on function "reciveMessageFromClient"');
-    } 
+    urlController.handleJSONRPC(socket,data);
 };
-global["subscribe"]=function (socket,eventName,url){
-    repository.createIfNotExists(url,socket.id);
-    eventController.subscribe(socket,eventName,url);
-    logger.info('Client subscribe to event ',eventName,' for url ',url,' client id ',socket.id);
-};
-
-global["unsubscribe"]=function (socket,eventName,url){
-    eventController.unsubscribe(socket,eventName,url);
-    logger.info('Client unsubscribe from event ',eventName,' for url ',url,' client id ',socket.id);
-};
-
 //When an exception is unhandled call the function 'unhandledException' in 'logger' module  
 process.on('uncaughtException', logger.unhandledException);
-/*
-// Event fired every time a new client connects:
-io.on('connection', function(socket) {
-
-    logger.info('New connection in MarterLol client id: ',socket.id);
-// Event fired every time a client disconnect from server
-    socket.on('disconnect', function() {
-        eventController.unsubscribe(socket,'all','all');
-        logger.info('Client disconnected from masterLol client id: ',socket.id);
-    });
-
-    socket.on('subscribe', function(eventName,url) {
-        repository.createIfNotExists(url,socket.id);
-        eventController.subscribe(socket,eventName,url);
-        logger.info('Client subscribe to event ',eventName,' for url ',url,' client id ',socket.id);
-    });
-
-    socket.on('unsubscribe', function(eventName,url) {
-        eventController.unsubscribe(socket,eventName,url);
-        logger.info('Client unsubscribe from event ',eventName,' for url ',url,' client id ',socket.id);
-    });
-
-});
-//When an exception is unhandled call the function 'unhandledException' in 'logger' module  
-process.on('uncaughtException', logger.unhandledException);
-*/
