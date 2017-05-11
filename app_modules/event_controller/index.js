@@ -43,7 +43,9 @@ var EventController = function(){
 				else //Erase that url from that event
 				{
 					var urls = clients.get(clientObject).get(eventName);
-					urls.splice(urls.indexOf(url),1);
+					var index = urls.indexOf(url);
+					if(index > -1)
+						urls.splice(index,1);
 					clients.get(clientObject).set(eventName,urls);
 				}
 			}
