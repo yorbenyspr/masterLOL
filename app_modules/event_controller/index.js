@@ -2,6 +2,7 @@ var eventLayer = require('../event_layer')
 var logger = require('../logger');
 var EventController = function(){
 		var clients = new Map();
+		var temporalClients = [];
 		this.subscribe = function(clientObject,eventName,url)
 		{
 			if(typeof(clients.get(clientObject)) === 'undefined')
@@ -106,24 +107,30 @@ var EventController = function(){
 	    this.GetValueResult = function(socketID,requestID,url,result,error)
 	    {
 	    	logger.info('Triggered GetValueResult Event');
-	    	clients.forEach(function(value, key) {
+	    	for(var i = 0; i < temporalClients.length; i++) {
 	    		try
 	    		{
-	    			if(key.id === socketID)
+	    			if(temporalClients[i].id === socketID)
 	    			{
 	    				var jsonRPC = {"jsonrpc": "2.0", "result": result, "id": requestID};
 	    				if(error)
 	    					jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Error getting value for url: " + url}, "id": requestID};
   						var strindRep = JSON.stringify(jsonRPC);
-  						key.send(strindRep);
+  						temporalClients[i].send(strindRep);
 	    				logger.info('Sending result from MasterLol to client');
+	    				return;
 	    			}
 	    		}
 	    		catch(e)
 	    		{
 	    			logger.error('Error sending message from MasterLol to client. Exception: ',e,'. Module "event_controller" function GetValueResult');
 	    		}
-	        });
+	    		finally
+	    		{
+	    			temporalClients.splice(i,1);//Remove from temporal clients
+	    			logger.info('Removing client from temporal');
+	    		}
+	        }
 	    };
 
 	    this.ErrorCreatingURL = function(url,socket)
@@ -145,6 +152,31 @@ var EventController = function(){
 	    			logger.error('Error sending message from MasterLol to client. Exception: ',e,'. Module "event_controller" function ErrorCreatingURL');
 	    		}
 	        });
+	    };
+
+	    this.addToTemporals = function(socket)
+	    {
+	    	temporalClients.push(socket);
+	    };
+
+	    this.removeFromTemporals = function(socket)
+	    {
+	    	var index = temporalClients.indexOf(socket);
+	    	while(index > -1)
+	    	{	try
+	    		{
+	    		    temporalClients.splice(index,1);
+	    		    index = temporalClients.indexOf(socket);
+	    		    logger.info('Removing client from temporals');	
+	    		}
+	    		catch(e)
+	    		{
+	    		    var message = "";
+	    		    if(typeof(e.message) !== 'undefined')
+	    		    message = e.message;
+	    		    logger.error('Error removing from temporal clients. Message: '+ message);
+	    		}
+	    	}
 	    };
 
 	    //Event Layer

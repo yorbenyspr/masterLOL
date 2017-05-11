@@ -23,7 +23,12 @@ var URLController = function(){
     	{
         	logger.error('Error reading jsonrpc. Exception: ',e,'. Module "url_controller" on function "handleJSONRPC"');
     	} 
-	}
+	};
+
+	that.ClientDisconnected = function(socket)
+	{
+		eventController.removeFromTemporals(socket);
+	};
 
 	that["subscribe"]=function (socket,eventName,url){
     	repository.createIfNotExists(url,socket.id);
@@ -68,6 +73,7 @@ var URLController = function(){
 	that["getValue"]=function (socket,url,requestID){
 		if(typeof(requestID) === 'undefined')
 			requestID = null;
+		eventController.addToTemporals(socket);
     	repository.getValue(url,socket.id,requestID);
 	};
 	//end methods
