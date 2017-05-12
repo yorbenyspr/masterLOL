@@ -68,7 +68,7 @@ var URLController = function(){
     	repository.setValue(url,jsonObject);
 	};
 	that["removeValue"]=function (socket,url){
-    	repository.removeValue('url');
+    	repository.removeValue(url);
 	};
 	that["getValue"]=function (socket,url,requestID){
 		if(typeof(requestID) === 'undefined')
