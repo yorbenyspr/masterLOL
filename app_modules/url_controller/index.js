@@ -21,6 +21,8 @@ var URLController = function(){
     	} 
     	catch(e)
     	{
+			if(typeof(e.message !== 'undefined'))
+				e = e.message;
         	logger.error('Error reading jsonrpc. Exception: ',e,'. Module "url_controller" on function "handleJSONRPC"');
     	} 
 	};

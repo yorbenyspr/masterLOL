@@ -51,6 +51,8 @@ var EventController = function(){
 			}
 			catch(e)
 			{
+				if(typeof(e.message !== 'undefined'))
+					e = e.message;
 				logger.error('Error unsubscribing client from MasterLol. Exception: ',e,'. Module "event_controller" function unsubscribe');
 			}
 		};
@@ -72,6 +74,8 @@ var EventController = function(){
   				}
   				catch(e)
   				{
+  					if(typeof(e.message !== 'undefined'))
+						e = e.message;
   					logger.error('Error sending message from MasterLol to client. Exception: ',e,'. Module "event_controller" function sendEventToClients');
   				}
 				});
@@ -125,6 +129,8 @@ var EventController = function(){
 	    		}
 	    		catch(e)
 	    		{
+	    			if(typeof(e.message !== 'undefined'))
+						e = e.message;
 	    			logger.error('Error sending message from MasterLol to client. Exception: ',e,'. Module "event_controller" function GetValueResult');
 	    		}
 	    		finally
@@ -151,6 +157,8 @@ var EventController = function(){
 	    		}
 	    		catch(e)
 	    		{
+	    			if(typeof(e.message !== 'undefined'))
+						e = e.message;
 	    			logger.error('Error sending message from MasterLol to client. Exception: ',e,'. Module "event_controller" function ErrorCreatingURL');
 	    		}
 	        });

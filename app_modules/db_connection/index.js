@@ -288,6 +288,8 @@ module.exports = function(dbUrl){
 						{
 							eventLayer.emit('GetValueResult',socketID,requestID,url,null,err);
 						}catch(e){
+							if(typeof(e.message !== 'undefined'))
+								e = e.message;
 							logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 						}
 						return;
@@ -304,6 +306,8 @@ module.exports = function(dbUrl){
 								{
 									eventLayer.emit('GetValueResult',socketID,requestID,url,null,err);
 								}catch(e){
+									if(typeof(e.message !== 'undefined'))
+										e = e.message;
 									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 								}
 								return;
@@ -327,6 +331,8 @@ module.exports = function(dbUrl){
 									{
 										eventLayer.emit('GetValueResult',socketID,requestID,url,obj.obj.jsonData,null);
 									}catch(e){
+										if(typeof(e.message !== 'undefined'))
+											e = e.message;
 										logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 									}
 									return;
@@ -337,6 +343,8 @@ module.exports = function(dbUrl){
 									{
 										eventLayer.emit('GetValueResult',socketID,requestID,url,{},"Not Found");
 									}catch(e){
+										if(typeof(e.message !== 'undefined'))
+											e = e.message;
 										logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 									}
 									return;
@@ -348,6 +356,8 @@ module.exports = function(dbUrl){
 								{
 									eventLayer.emit('GetValueResult',socketID,requestID,url,obj.jsonData,null);
 								}catch(e){
+									if(typeof(e.message !== 'undefined'))
+										e = e.message;
 									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 								}
 								return;
@@ -358,6 +368,8 @@ module.exports = function(dbUrl){
 								{
 									eventLayer.emit('GetValueResult',socketID,requestID,url,null,"Not Found");
 								}catch(e){
+									if(typeof(e.message !== 'undefined'))
+										e = e.message;
 									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 								}
 								return;
@@ -370,6 +382,8 @@ module.exports = function(dbUrl){
 						{
 							eventLayer.emit('GetValueResult',socketID,requestID,url,null,"Bad url");
 						}catch(e){
+							if(typeof(e.message !== 'undefined'))
+								e = e.message;
 							logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 						}
 						return;
