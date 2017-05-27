@@ -110,9 +110,9 @@ var EventController = function(){
 	    	sendEventToClients('onChildMoved',jsonObject,url);
 	    };
 
-	    this.GetValueResult = function(socketID,requestID,url,result,error)
+	    this.OperationResult = function(socketID,requestID,url,result,error,errorMessage)
 	    {
-	    	logger.info('Triggered GetValueResult Event');
+	    	logger.info('Triggered OperationResult Event');
 	    	for(var i = 0; i < temporalClients.length; i++) {
 	    		try
 	    		{
@@ -120,7 +120,7 @@ var EventController = function(){
 	    			{
 	    				var jsonRPC = {"jsonrpc": "2.0", "result": result, "id": requestID};
 	    				if(error)
-	    					jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Error getting value for url: " + url}, "id": requestID};
+	    					jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": errorMessage}, "id": requestID};
   						var strindRep = JSON.stringify(jsonRPC);
   						temporalClients[i].send(strindRep);
 	    				logger.info('Sending result from MasterLol to client');
@@ -196,7 +196,7 @@ var EventController = function(){
 	eventLayer.on('ChildRemoved',this.ChildRemoved);
 	eventLayer.on('ChildMoved',this.ChildMoved);
 	eventLayer.on('ErrorCreatingURL',this.ErrorCreatingURL);
-	eventLayer.on('GetValueResult',this.GetValueResult);
+	eventLayer.on('OperationResult',this.OperationResult);
 	//End event
 };
 
