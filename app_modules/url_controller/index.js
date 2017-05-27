@@ -26,7 +26,7 @@ var URLController = function(){
         			jsonrpc.params.requestID=null;
             	jsonrpc.params.socket=socket;
             	var methodName= jsonrpc.method;
-            	that[methodName].apply(that,jsonrpc.params);
+            	that[methodName].apply(that,[jsonrpc.params]);
         	}
 
     	} 
@@ -46,6 +46,7 @@ var URLController = function(){
 	that["subscribe"]=function (paramsObj){
 		if(that.validateSubscribeUnsubscribe(paramsObj,"subscribe"))
 		{
+			eventController.addToTemporals(paramsObj.socket);
     		repository.createIfNotExists(paramsObj.url,paramsObj.socket.id,paramsObj.requestID);
     		eventController.subscribe(paramsObj.socket,paramsObj.eventName,paramsObj.url);
     		logger.info('Client subscribe to event ',paramsObj.eventName,' for url ',paramsObj.url,' client id ',paramsObj.socket.id);
@@ -56,6 +57,7 @@ var URLController = function(){
 	that["unsubscribe"]=function (paramsObj){
 		if(that.validateSubscribeUnsubscribe(paramsObj,"unsubscribe"))
 		{
+			eventController.addToTemporals(paramsObj.socket);
     		eventController.unsubscribe(paramsObj.socket,paramsObj.eventName,paramsObj.url);
     		logger.info('Client unsubscribe from event ',paramsObj.eventName,' for url ',paramsObj.url,' client id ',paramsObj.socket.id);
     	}
@@ -101,6 +103,10 @@ var URLController = function(){
 			eventController.addToTemporals(paramsObj.socket);
 			repository.setValue(paramsObj.url,paramsObj.jsonObject,paramsObj.socket.id,paramsObj.requestID,false);	
 		}
+    	else
+    	{
+    		that.sendBagRequestMessage(paramsObj);
+    	}
     	
 	};
 	//socket,url
@@ -110,6 +116,10 @@ var URLController = function(){
 			eventController.addToTemporals(paramsObj.socket);
     		repository.removeValue(paramsObj.url,paramsObj.socket.id,paramsObj.requestID);
     	}
+    	else
+    	{
+    		that.sendBagRequestMessage(paramsObj);
+    	}
 	};
 	//socket,url
 	that["getValue"]=function (paramsObj){
@@ -117,6 +127,10 @@ var URLController = function(){
 		{
 			eventController.addToTemporals(paramsObj.socket);
     		repository.getValue(paramsObj.url,paramsObj.socket.id,paramsObj.requestID);
+    	}
+    	else
+    	{
+    		that.sendBagRequestMessage(paramsObj);
     	}
 	};
 	//end methods
@@ -133,6 +147,19 @@ var URLController = function(){
   			var strindRep = JSON.stringify(jsonRPC);
   			paramsObj.socket.send(strindRep);
   			return false;
+		}
+	};
+
+	that.sendBagRequestMessage = function(paramsObj){
+		try
+		{
+			var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Bag Request"}, "id": paramsObj.requestID};
+  			var strindRep = JSON.stringify(jsonRPC);
+  			paramsObj.socket.send(strindRep);
+		}catch(e){
+			if(typeof(e.message !== 'undefined'))
+				e = e.message;
+        	logger.error('Error reading jsonrpc. Exception: ',e,'. Module "url_controller" on function "handleJSONRPC"');
 		}
 	};
 	//End
