@@ -110,7 +110,7 @@ var EventController = function(){
 	    	sendEventToClients('onChildMoved',jsonObject,url);
 	    };
 
-	    this.OperationResult = function(socketID,requestID,url,result,error,errorMessage)
+	    this.OperationResult = function(socketID,requestID,url,result,error,errorMessage,toSubscribe)
 	    {
 	    	logger.info('Triggered OperationResult Event');
 	    	for(var i = 0; i < temporalClients.length; i++) {

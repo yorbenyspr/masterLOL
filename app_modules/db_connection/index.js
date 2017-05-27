@@ -64,17 +64,15 @@ module.exports = function(dbUrl){
 	* Create a tree with url representation
 	* A 3th parameter can be passed as 3 that indicate that an event is send if occours an error creating the three
 	*/
-	this.setValue=function(url,jsonObject){
-			var emitEventOnError = false;
-			var socket = arguments[3];
-			if(typeof(arguments[2]!=='undefined' && arguments[2] === true))
-				emitEventOnError = true;
+	this.setValue=function(url,jsonObject,socketID,requestID,toSubscribe){
+			var errMessage = "Error subscribing client";
+			if(!toSubscribe)
+				errMessage = "Error setting value";
 			mongoClient.connect(dbUrl,function(err,db){
 			if(err != null)
 			{
 				logger.error("Can't connect to ", dbUrl, ' to set value');
-				if(emitEventOnError)
-					eventLayer.emit('ErrorCreatingURL',url,socket);
+				eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,toSubscribe);
 				return;
 			}
 			logger.info("Success connection to ", dbUrl);
@@ -86,8 +84,7 @@ module.exports = function(dbUrl){
 					if(err != null)
 					{
 						logger.error("Can't find the element ", root);
-						if(emitEventOnError)
-							eventLayer.emit('ErrorCreatingURL',url,socket);
+						eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,toSubscribe);
 						return;
 					}
 					if(document != null)
@@ -101,13 +98,13 @@ module.exports = function(dbUrl){
                             		if(err != null)
                             		{
                             			logger.error("Can't Update the element ", parent._id);
-                            			if(emitEventOnError)
-											eventLayer.emit('ErrorCreatingURL',url,socket);
+                            			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,toSubscribe);
                             		}
                             		else
                             		{
                             			logger.info("Updated element ");
                             			eventLayer.emit('DataChanged',jsonObject,url);
+                            			eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,toSubscribe);
                             		}
 
                             });
@@ -144,8 +141,7 @@ module.exports = function(dbUrl){
                             		if(err != null)
                             		{
                             			logger.error("Can't Update the element ", parent._id);
-                            			if(emitEventOnError)
-											eventLayer.emit('ErrorCreatingURL',url,socket);
+                            			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,toSubscribe);
                             		}
                             		else
                             		{
@@ -159,7 +155,7 @@ module.exports = function(dbUrl){
                             				eventLayer.emit('DataChanged',jsonObject,url);
                             			}
                             		}
-
+                            		eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,toSubscribe);
                             });
 							
 							
@@ -177,14 +173,14 @@ module.exports = function(dbUrl){
 								if(err != null)
 								{
 									logger.error("Can't insert the element ");
-									if(emitEventOnError)
-										eventLayer.emit('ErrorCreatingURL',url,socket);
+									eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,toSubscribe);
 									return;
 								}
 								else
 								{
 									logger.info("Inserted element ");
 									eventLayer.emit('ChildAdded',jsonObject,url,socket);
+									eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,toSubscribe);
 								}
 							});
 						}
@@ -204,11 +200,13 @@ module.exports = function(dbUrl){
 	* @author Yorbenys
 	* Romove the last child in the url
 	*/
-	this.removeValue= function(url){
+	this.removeValue= function(url,socketID,requestID){
+		var errMessage = "Error deleting object";
 		mongoClient.connect(dbUrl,function(err,db){
 					if(err != null)
 					{
 						logger.error("Can't connect to ", dbUrl, ' to remove value');
+						eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 						return;
 					}
 					logger.info("Success connection to ", dbUrl);
@@ -219,12 +217,14 @@ module.exports = function(dbUrl){
                     		if(err != null)
                     		{
                     			logger.error("Can't delete");
+                    			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
                     			return;
                     		}
                     		else
                     		{
                     			logger.info("Element deleted");
                     			eventLayer.emit('ChildRemoved',jsonObject,url);
+                    			eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,false);
                     			return;
                     		}
                     	});
@@ -235,6 +235,7 @@ module.exports = function(dbUrl){
                     		if(err !=null)
                     		{
                             	logger.error("Can't find ",arrE[0]);
+                            	eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
                             	return;
                     		}
                             var obj=result;
@@ -257,11 +258,13 @@ module.exports = function(dbUrl){
                             		if(err != null)
                             		{
                             			logger.error("Can't update element");
+                            			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
                             		}
                             		else
                             		{
  										logger.info("Updated element");
- 										eventLayer.emit('ChildRemoved',jsonObject,url);	                           			
+ 										eventLayer.emit('ChildRemoved',jsonObject,url);
+ 										eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,false);	                           			
                             		}
 
                             		});
@@ -280,6 +283,7 @@ module.exports = function(dbUrl){
 	* The callbackFunc is called with two params "data,error"
 	*/
 	this.getValue= function(url,socketID,requestID){
+		var errMessage = "Can't get value";
 		mongoClient.connect(dbUrl,function(err,db){
 					if(err != null)
 					{
@@ -293,6 +297,7 @@ module.exports = function(dbUrl){
 							logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 						}
 						return;
+						eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 					}
 					logger.info("Success connection to ", dbUrl);
                     var arrE =getArrayFromUrl(url);
@@ -304,7 +309,7 @@ module.exports = function(dbUrl){
                             	logger.error("Can't find ",arrE[0]);
                             	try
 								{
-									eventLayer.emit('GetValueResult',socketID,requestID,url,null,err);
+									eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 								}catch(e){
 									if(typeof(e.message !== 'undefined'))
 										e = e.message;
@@ -329,7 +334,8 @@ module.exports = function(dbUrl){
 								{
 									try
 									{
-										eventLayer.emit('GetValueResult',socketID,requestID,url,obj.obj.jsonData,null);
+										eventLayer.emit('OperationResult',socketID,requestID,url,obj.obj.jsonData,false,null,false);
+										//eventLayer.emit('GetValueResult',socketID,requestID,url,obj.obj.jsonData,null);
 									}catch(e){
 										if(typeof(e.message !== 'undefined'))
 											e = e.message;
@@ -341,7 +347,8 @@ module.exports = function(dbUrl){
 								{
 									try
 									{
-										eventLayer.emit('GetValueResult',socketID,requestID,url,{},"Not Found");
+										eventLayer.emit('OperationResult',socketID,requestID,url,"Not found",false,null,false);
+										//eventLayer.emit('GetValueResult',socketID,requestID,url,{},"Not Found");
 									}catch(e){
 										if(typeof(e.message !== 'undefined'))
 											e = e.message;
@@ -354,7 +361,8 @@ module.exports = function(dbUrl){
 							{
 								try
 								{
-									eventLayer.emit('GetValueResult',socketID,requestID,url,obj.jsonData,null);
+									eventLayer.emit('OperationResult',socketID,requestID,url,obj.obj.jsonData,false,null,false);
+									//eventLayer.emit('GetValueResult',socketID,requestID,url,obj.jsonData,null);
 								}catch(e){
 									if(typeof(e.message !== 'undefined'))
 										e = e.message;
@@ -366,7 +374,8 @@ module.exports = function(dbUrl){
 							{
 								try
 								{
-									eventLayer.emit('GetValueResult',socketID,requestID,url,null,"Not Found");
+									eventLayer.emit('OperationResult',socketID,requestID,url,"Not Found",false,null,false);
+									//eventLayer.emit('GetValueResult',socketID,requestID,url,null,"Not Found");
 								}catch(e){
 									if(typeof(e.message !== 'undefined'))
 										e = e.message;
@@ -380,7 +389,8 @@ module.exports = function(dbUrl){
                     {
                     	try
 						{
-							eventLayer.emit('GetValueResult',socketID,requestID,url,null,"Bad url");
+							eventLayer.emit('OperationResult',socketID,requestID,url,null,true,"Bad url",false);
+							//eventLayer.emit('GetValueResult',socketID,requestID,url,null,"Bad url");
 						}catch(e){
 							if(typeof(e.message !== 'undefined'))
 								e = e.message;
@@ -393,12 +403,12 @@ module.exports = function(dbUrl){
 
 	};
 	//Create an url if not exists
-	this.createIfNotExists = function(url,socket){
+	this.createIfNotExists = function(url,socket,requestID){
 		mongoClient.connect(dbUrl,function(err,db){
 			if(err != null)
 			{
 				logger.error("Can't connect to ", dbUrl, ' to set value');
-				eventLayer.emit('ErrorCreatingURL',url,socket);
+				eventLayer.emit('OperationResult',socket,requestID,url,null,true,"Error subscribing client",true);
 				return;
 			}
 			logger.info("Success connection to ", dbUrl);
@@ -410,7 +420,7 @@ module.exports = function(dbUrl){
 					if(err != null)
 					{
 						logger.error("Can't find the element ", root);
-						eventLayer.emit('ErrorCreatingURL',url,socket);
+						eventLayer.emit('OperationResult',socket,requestID,url,null,true,"Error subscribing client",true);
 						return;
 					}
 					var createUrl = false;
@@ -443,7 +453,11 @@ module.exports = function(dbUrl){
 					if(createUrl)
 					{
 						logger.info("Creating url: ",url);
-						this.setValue(url,null,true,socket);
+						this.setValue(url,null,socket,requestID,true);
+					}
+					else
+					{
+						eventLayer.emit('OperationResult',socket,requestID,url,true,false,null,true);
 					}
 
 				});
