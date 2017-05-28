@@ -290,7 +290,8 @@ module.exports = function(dbUrl){
 						logger.error("Can't connect to ", dbUrl, ' to get value');
 						try
 						{
-							eventLayer.emit('GetValueResult',socketID,requestID,url,null,err);
+							eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
+							//eventLayer.emit('GetValueResult',socketID,requestID,url,null,err);
 						}catch(e){
 							if(typeof(e.message !== 'undefined'))
 								e = e.message;
