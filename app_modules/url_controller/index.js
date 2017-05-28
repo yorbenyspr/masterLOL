@@ -58,7 +58,7 @@ var URLController = function(){
 		if(that.validateSubscribeUnsubscribe(paramsObj,"unsubscribe"))
 		{
 			eventController.addToTemporals(paramsObj.socket);
-    		eventController.unsubscribe(paramsObj.socket,paramsObj.eventName,paramsObj.url);
+    		eventController.unsubscribe(paramsObj.socket,paramsObj.eventName,paramsObj.url,paramsObj.requestID);
     		logger.info('Client unsubscribe from event ',paramsObj.eventName,' for url ',paramsObj.url,' client id ',paramsObj.socket.id);
     	}
 	};

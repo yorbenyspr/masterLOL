@@ -28,7 +28,7 @@ var EventController = function(){
 				}
 			}
 		};
-		this.unsubscribe = function(clientObject,eventName,url)
+		this.unsubscribe = function(clientObject,eventName,url,requestID)
 		{
 			try
 			{
@@ -48,12 +48,14 @@ var EventController = function(){
 						urls.splice(index,1);
 					clients.get(clientObject).set(eventName,urls);
 				}
+				this.OperationResult(clientObject.id,requestID,url,true,false,null,false);	
 			}
 			catch(e)
 			{
 				if(typeof(e.message !== 'undefined'))
 					e = e.message;
 				logger.error('Error unsubscribing client from MasterLol. Exception: ',e,'. Module "event_controller" function unsubscribe');
+				this.OperationResult(clientObject.id,requestID,url,null,true,e,false);
 			}
 		};
 		var sendEventToClients = function(eventName,jsonObject,url)

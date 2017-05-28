@@ -35,7 +35,7 @@ wServer.on('connect', function(webSocketConnection){
 wServer.on('close', function(webSocketConnection,closeReason,description){
         clientConnectionId--;
         logger.info('Closed Connection from MasterLol ' + closeReason +" "+ description," client id: ", webSocketConnection['id']);
-        urlController.unsubscribe(webSocketConnection,"all","all");
+        urlController.unsubscribe({"socket":webSocketConnection,"eventName":"all","url":"all","requestID":null});
         urlController.ClientDisconnected(webSocketConnection); 
 });
 
