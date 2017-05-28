@@ -71,6 +71,7 @@ module.exports = function(dbUrl){
 			mongoClient.connect(dbUrl,function(err,db){
 			if(err != null)
 			{
+				errMessage = err.message;
 				logger.error("Can't connect to ", dbUrl, ' to set value');
 				eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,toSubscribe);
 				return;
@@ -83,6 +84,7 @@ module.exports = function(dbUrl){
 				db.collection('url').findOne({_id:root},function(err,document){
 					if(err != null)
 					{
+						errMessage = err.message;
 						logger.error("Can't find the element ", root);
 						eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,toSubscribe);
 						return;
@@ -96,7 +98,8 @@ module.exports = function(dbUrl){
 							parent.jsonData=jsonObject;
 							db.collection('url').update({_id:parent._id},{$set:parent},function(err, result){
                             		if(err != null)
-                            		{
+                            		{  			
+										errMessage = err.message;
                             			logger.error("Can't Update the element ", parent._id);
                             			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,toSubscribe);
                             		}
@@ -140,6 +143,7 @@ module.exports = function(dbUrl){
                             db.collection('url').update({_id:parent._id},{$set:parent},function(err, result){
                             		if(err != null)
                             		{
+                            			errMessage = err.message;
                             			logger.error("Can't Update the element ", parent._id);
                             			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,toSubscribe);
                             		}
@@ -172,6 +176,7 @@ module.exports = function(dbUrl){
 							db.collection('url').insert(obj,function(err,document){
 								if(err != null)
 								{
+									errMessage = err.message;
 									logger.error("Can't insert the element ");
 									eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,toSubscribe);
 									return;
@@ -205,6 +210,7 @@ module.exports = function(dbUrl){
 		mongoClient.connect(dbUrl,function(err,db){
 					if(err != null)
 					{
+						errMessage = err.message;
 						logger.error("Can't connect to ", dbUrl, ' to remove value');
 						eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 						return;
@@ -216,6 +222,7 @@ module.exports = function(dbUrl){
                     	db.collection('url').remove({_id:arrE[0]},function(err,result){
                     		if(err != null)
                     		{
+                    			errMessage = err.message;
                     			logger.error("Can't delete");
                     			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
                     			return;
@@ -234,6 +241,7 @@ module.exports = function(dbUrl){
                     	db.collection('url').findOne({_id:arrE[0]},function(err,result){
                     		if(err !=null)
                     		{
+                    			errMessage = err.message;
                             	logger.error("Can't find ",arrE[0]);
                             	eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
                             	return;
@@ -257,6 +265,7 @@ module.exports = function(dbUrl){
 									db.collection('url').update({_id:result._id},{$set:result},function(err, result){
                             		if(err != null)
                             		{
+                            			errMessage = err.message;
                             			logger.error("Can't update element");
                             			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
                             		}
@@ -287,6 +296,7 @@ module.exports = function(dbUrl){
 		mongoClient.connect(dbUrl,function(err,db){
 					if(err != null)
 					{
+						errMessage = err.message;
 						logger.error("Can't connect to ", dbUrl, ' to get value');
 						try
 						{
@@ -307,6 +317,7 @@ module.exports = function(dbUrl){
                     	db.collection('url').findOne({_id:arrE[0]},function(err,result){
                     		if(err !=null)
                     		{
+                    			errMessage = err.message;
                             	logger.error("Can't find ",arrE[0]);
                             	try
 								{
@@ -405,11 +416,13 @@ module.exports = function(dbUrl){
 	};
 	//Create an url if not exists
 	this.createIfNotExists = function(url,socket,requestID){
+		var errMessage = "Error subscribing client";
 		mongoClient.connect(dbUrl,function(err,db){
 			if(err != null)
 			{
+				errMessage = err.message;
 				logger.error("Can't connect to ", dbUrl, ' to set value');
-				eventLayer.emit('OperationResult',socket,requestID,url,null,true,"Error subscribing client",true);
+				eventLayer.emit('OperationResult',socket,requestID,url,null,true,errMessage,true);
 				return;
 			}
 			logger.info("Success connection to ", dbUrl);
@@ -420,6 +433,7 @@ module.exports = function(dbUrl){
 				db.collection('url').findOne({_id:root},function(err,document){
 					if(err != null)
 					{
+						errMessage = err.message;
 						logger.error("Can't find the element ", root);
 						eventLayer.emit('OperationResult',socket,requestID,url,null,true,"Error subscribing client",true);
 						return;
