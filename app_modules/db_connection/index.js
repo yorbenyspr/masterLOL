@@ -223,7 +223,7 @@ module.exports = function(dbUrl){
                     		else
                     		{
                     			logger.info("Element deleted");
-                    			eventLayer.emit('ChildRemoved',jsonObject,url);
+                    			eventLayer.emit('ChildRemoved',result,url);
                     			eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,false);
                     			return;
                     		}
@@ -263,7 +263,7 @@ module.exports = function(dbUrl){
                             		else
                             		{
  										logger.info("Updated element");
- 										eventLayer.emit('ChildRemoved',jsonObject,url);
+ 										eventLayer.emit('ChildRemoved',result,url);
  										eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,false);	                           			
                             		}
 
