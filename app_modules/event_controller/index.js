@@ -116,10 +116,12 @@ var EventController = function(){
 	    {
 	    	logger.info('Triggered OperationResult Event');
 	    	for(var i = 0; i < temporalClients.length; i++) {
+	    		var remove = false;
 	    		try
 	    		{
 	    			if(temporalClients[i].id === socketID)
 	    			{
+	    				remove = true;
 	    				var jsonRPC = {"jsonrpc": "2.0", "result": result, "id": requestID};
 	    				if(error)
 	    					jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": errorMessage}, "id": requestID};
@@ -131,14 +133,18 @@ var EventController = function(){
 	    		}
 	    		catch(e)
 	    		{
+	    			remove = true;
 	    			if(typeof(e.message !== 'undefined'))
 						e = e.message;
 	    			logger.error('Error sending message from MasterLol to client. Exception: ',e,'. Module "event_controller" function GetValueResult');
 	    		}
 	    		finally
 	    		{
-	    			temporalClients.splice(i,1);//Remove from temporal clients
-	    			logger.info('Removing client from temporal');
+	    			if(remove)
+	    			{
+	    				temporalClients.splice(i,1);//Remove from temporal clients
+	    				logger.info('Removing client from temporal');
+	    			}
 	    		}
 	        }
 	    };
