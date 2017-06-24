@@ -76,8 +76,8 @@ function customSend(message){
         if(typeof(error) !== 'undefined')
         {
             if(typeof(error.message) !== 'undefined')
-                    error = error.message;
-            logger.error('Error sending message to client from MasterLol. Message: ',error,'. Module "main" function customSend');
+                error = error.message;
+            logger.error('Error sending message to client from MasterLol. Message: ',error,'. Module "main" function "customSend"');
         }
     });
 };
