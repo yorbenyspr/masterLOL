@@ -5,40 +5,82 @@ var logger = require('../app_modules/logger');
 var app = express();  
 
 var server = require('http').Server(app);  
-var WebSocketServer = require('../node_modules/websocket').server;
+var WebSocketServer = require('../node_modules/ws');
 server.listen(8081, function() {  
     logger.info('Started server in http://localhost:8081');
 });
 //Creating websocket server
 var clientConnectionId= 1;
-var wServer= new WebSocketServer({httpServer: server,autoAcceptConnections:false});
-//Used for accept or reject connections
-wServer.on('request', function(webSocketRequest){
-    webSocketRequest.accept();
-    logger.info('New request to MarterLol from client');
-
-});
+var wServer= new WebSocketServer.Server({ server });
 //Called when a client is connected
-wServer.on('connect', function(webSocketConnection){
+wServer.on('connection', function(webSocketConnection,req){
     webSocketConnection['id']=clientConnectionId;
     clientConnectionId++;
     logger.info('New connection in MarterLol, client id: ', webSocketConnection['id']);
+
+    //Ping and Pong Messages. Used for know if a client has open the connection channel
+    webSocketConnection.isAlive = true;
+    webSocketConnection.on('pong', connectionAlive);
+    
+    //Set default send function to custom function
+    var defaultSend = webSocketConnection.send;
+    webSocketConnection.send = customSend;
+    webSocketConnection.defaultSend = defaultSend;
+
+    //Called when a client send messages to the server
     webSocketConnection.on('message',function(message){
-        console.log('Message from client id: ',webSocketConnection['id'], 'message: ', message.utf8Data);
+        console.log('Message from client id: ',webSocketConnection['id'], 'message: ', message);
         //Converting the string message to jsonrpc object
-        var data = message.utf8Data;
+        var data = message;
         reciveMessageFromClient(webSocketConnection,data);
+    });
+
+    //Called when a client close the connection. If a client were disconnected from server unsubscribe that client from all event
+    webSocketConnection.on('close',function(){
+        clientConnectionId--;
+        logger.info('Closed Connection from MasterLol client id: ', webSocketConnection['id']);
+        urlController.unsubscribe({"socket":webSocketConnection,"eventName":"all","url":"all","requestID":null,"responseToClient":false});
+        urlController.ClientDisconnected(webSocketConnection);
     });
 });
 
-//Called when a client close the connection. I a client were disconnected from server unsubscribe that client from all event
-wServer.on('close', function(webSocketConnection,closeReason,description){
-        clientConnectionId--;
-        logger.info('Closed Connection from MasterLol ' + closeReason +" "+ description," client id: ", webSocketConnection['id']);
-        urlController.unsubscribe({"socket":webSocketConnection,"eventName":"all","url":"all","requestID":null});
-        urlController.ClientDisconnected(webSocketConnection); 
-});
+logger.info("Making ping to clients every: ",confManager.getPingInterval(),' "ms"');
 
+//Function for send ping message to the client
+const interval = setInterval(function ping() {
+  wServer.clients.forEach(function each(webSocketConnection) {
+    if (webSocketConnection.isAlive === false) 
+    {
+        logger.info('Client does not response ping message from master lol. Client id: ',webSocketConnection.id,'. Terminate connection');
+        urlController.unsubscribe({"socket":webSocketConnection,"eventName":"all","url":"all","requestID":null,"responseToClient":false});
+        return webSocketConnection.terminate();
+    }
+
+    webSocketConnection.isAlive = false;
+    logger.info('Send ping message from master lol to client id: ',webSocketConnection.id);
+    webSocketConnection.ping('', false, true);
+  });
+}, confManager.getPingInterval());
+
+//Used for know if a client has open the connection channel
+function connectionAlive() {
+    logger.info('Client response with pong message. Client id: ',this.id);
+    this.isAlive = true;
+}
+//Custom function for send message to client
+function customSend(message){
+    ws = this;
+    ws.defaultSend(message, function ack(error) {
+        // If error is not defined, the send has been completed, otherwise the error
+        // object will indicate what failed.
+        if(typeof(error) !== 'undefined')
+        {
+            if(typeof(error.message) !== 'undefined')
+                    error = error.message;
+            logger.error('Error sending message to client from MasterLol. Message: ',error,'. Module "main" function customSend');
+        }
+    });
+};
 function reciveMessageFromClient(socket,data){
     urlController.handleJSONRPC(socket,data);
 };

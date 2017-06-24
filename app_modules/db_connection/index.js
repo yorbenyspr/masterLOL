@@ -303,7 +303,7 @@ module.exports = function(dbUrl){
 							eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 							//eventLayer.emit('GetValueResult',socketID,requestID,url,null,err);
 						}catch(e){
-							if(typeof(e.message !== 'undefined'))
+							if(typeof(e.message) !== 'undefined')
 								e = e.message;
 							logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 						}
@@ -323,7 +323,7 @@ module.exports = function(dbUrl){
 								{
 									eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 								}catch(e){
-									if(typeof(e.message !== 'undefined'))
+									if(typeof(e.message) !== 'undefined')
 										e = e.message;
 									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 								}
@@ -349,7 +349,7 @@ module.exports = function(dbUrl){
 										eventLayer.emit('OperationResult',socketID,requestID,url,obj.obj.jsonData,false,null,false);
 										//eventLayer.emit('GetValueResult',socketID,requestID,url,obj.obj.jsonData,null);
 									}catch(e){
-										if(typeof(e.message !== 'undefined'))
+										if(typeof(e.message) !== 'undefined')
 											e = e.message;
 										logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 									}
@@ -362,7 +362,7 @@ module.exports = function(dbUrl){
 										eventLayer.emit('OperationResult',socketID,requestID,url,"Not found",false,null,false);
 										//eventLayer.emit('GetValueResult',socketID,requestID,url,{},"Not Found");
 									}catch(e){
-										if(typeof(e.message !== 'undefined'))
+										if(typeof(e.message) !== 'undefined')
 											e = e.message;
 										logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 									}
@@ -376,7 +376,7 @@ module.exports = function(dbUrl){
 									eventLayer.emit('OperationResult',socketID,requestID,url,obj.obj.jsonData,false,null,false);
 									//eventLayer.emit('GetValueResult',socketID,requestID,url,obj.jsonData,null);
 								}catch(e){
-									if(typeof(e.message !== 'undefined'))
+									if(typeof(e.message) !== 'undefined')
 										e = e.message;
 									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 								}
@@ -389,7 +389,7 @@ module.exports = function(dbUrl){
 									eventLayer.emit('OperationResult',socketID,requestID,url,"Not Found",false,null,false);
 									//eventLayer.emit('GetValueResult',socketID,requestID,url,null,"Not Found");
 								}catch(e){
-									if(typeof(e.message !== 'undefined'))
+									if(typeof(e.message) !== 'undefined')
 										e = e.message;
 									logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 								}
@@ -404,7 +404,7 @@ module.exports = function(dbUrl){
 							eventLayer.emit('OperationResult',socketID,requestID,url,null,true,"Bad url",false);
 							//eventLayer.emit('GetValueResult',socketID,requestID,url,null,"Bad url");
 						}catch(e){
-							if(typeof(e.message !== 'undefined'))
+							if(typeof(e.message) !== 'undefined')
 								e = e.message;
 							logger.error("Exception: ", e, ". Module: db_connection, function 'getValue'");
 						}

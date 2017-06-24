@@ -14,6 +14,10 @@ var Configuration = function()
 	{
 		return appjson.level;
 	};
+	this.getPingInterval = function()
+	{
+		return appjson.pingInterval;
+	};
 }
 var confManager = new Configuration();
 module.exports = confManager;

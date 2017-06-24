@@ -6,12 +6,13 @@ var URLController = function(){
 	var that = this;
 	that.handleJSONRPC = function(socket,data)
 	{
+		var requestID = null;
 		try
     	{
         	var jsonrpc = JSON.parse(data);
         	if(Object.prototype.toString.call(jsonrpc.params) !=="[object Object]")
         	{
-        		var requestID = typeof(jsonrpc.id) !=='undefined' ? jsonrpc.id : null;
+        		requestID = typeof(jsonrpc.id) !=='undefined' ? jsonrpc.id : null;
         		var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Bag Request"}, "id": requestID};
   				var strindRep = JSON.stringify(jsonRPC);
   				socket.send(strindRep);
@@ -32,9 +33,13 @@ var URLController = function(){
     	} 
     	catch(e)
     	{
-			if(typeof(e.message !== 'undefined'))
+			if(typeof(e.message) !== 'undefined')
 				e = e.message;
         	logger.error('Error reading jsonrpc. Exception: ',e,'. Module "url_controller" on function "handleJSONRPC"');
+        	var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Bag Request"}, "id": requestID};
+  			var strindRep = JSON.stringify(jsonRPC);
+  			logger.error('Sending Bag Request to the client from module: "url_controller" method: "handleJSONRPC"');
+  			socket.send(strindRep);
     	} 
 	};
 
@@ -57,8 +62,13 @@ var URLController = function(){
 	that["unsubscribe"]=function (paramsObj){
 		if(that.validateSubscribeUnsubscribe(paramsObj,"unsubscribe"))
 		{
+			var responseToClient = true;
+			if(typeof(paramsObj.responseToClient) !== 'undefined')
+			{
+				responseToClient = paramsObj.responseToClient;
+			}
 			eventController.addToTemporals(paramsObj.socket);
-    		eventController.unsubscribe(paramsObj.socket,paramsObj.eventName,paramsObj.url,paramsObj.requestID);
+    		eventController.unsubscribe(paramsObj.socket,paramsObj.eventName,paramsObj.url,paramsObj.requestID,responseToClient);
     		logger.info('Client unsubscribe from event ',paramsObj.eventName,' for url ',paramsObj.url,' client id ',paramsObj.socket.id);
     	}
 	};
@@ -157,7 +167,7 @@ var URLController = function(){
   			var strindRep = JSON.stringify(jsonRPC);
   			paramsObj.socket.send(strindRep);
 		}catch(e){
-			if(typeof(e.message !== 'undefined'))
+			if(typeof(e.message) !== 'undefined')
 				e = e.message;
         	logger.error('Error reading jsonrpc. Exception: ',e,'. Module "url_controller" on function "handleJSONRPC"');
 		}

@@ -1,3 +1,4 @@
 {
-	"level": "debug"
+	"level": "debug",
+	"pingInterval": 60000
 }
