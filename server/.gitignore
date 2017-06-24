@@ -4,3 +4,4 @@
 /test-socket-io.js
 /test.js
 *.log
+/project.log
