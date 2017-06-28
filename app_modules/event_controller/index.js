@@ -76,7 +76,7 @@ var EventController = function(){
   					{
   						if(typeof(value.get(eventName)) !== 'undefined' && value.get(eventName).indexOf(url) > -1)
   						{
-  							var jsonRPC = {"jsonrpc": "2.0", "method": eventName, "params": [jsonObject, url]};
+  							var jsonRPC = {"jsonrpc": "2.0", "method": eventName, "params": {"jsonObject":jsonObject, "url":url}};
   							var strindRep = JSON.stringify(jsonRPC);
   							key.send(strindRep);
   							logger.info('Sending message from MasterLol to client');

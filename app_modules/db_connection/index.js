@@ -106,7 +106,7 @@ module.exports = function(dbUrl){
                             		else
                             		{
                             			logger.info("Updated element ");
-                            			eventLayer.emit('DataChanged',jsonObject,url);
+                            			eventLayer.emit('DataChange',jsonObject,url);
                             			eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,toSubscribe);
                             		}
 
@@ -156,7 +156,7 @@ module.exports = function(dbUrl){
                             			}
                             			else
                             			{
-                            				eventLayer.emit('DataChanged',jsonObject,url);
+                            				eventLayer.emit('DataChange',jsonObject,url);
                             			}
                             		}
                             		eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,toSubscribe);
