@@ -184,7 +184,7 @@ module.exports = function(dbUrl){
 								else
 								{
 									logger.info("Inserted element ");
-									eventLayer.emit('ChildAdded',jsonObject,url,socket);
+									eventLayer.emit('ChildAdded',jsonObject,url,socketID);
 									eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,toSubscribe);
 								}
 							});
