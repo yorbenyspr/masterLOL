@@ -3,8 +3,9 @@ var logger = require('../logger');
 var EventController = function(){
 		var clients = new Map();
 		var temporalClients = [];
-		this.subscribe = function(clientObject,eventName,url)
+		this.subscribe = function(clientObject,eventName,url,requestID)
 		{
+			var url = {"url":url,"requestID":requestID};
 			if(typeof(clients.get(clientObject)) === 'undefined')
 			{
 				var eventMap = new Map();
@@ -48,7 +49,16 @@ var EventController = function(){
 				else //Erase that url from that event
 				{
 					var urls = clients.get(clientObject).get(eventName);
-					var index = urls.indexOf(url);
+					var index = -1;
+					for (var i = 0; i < urls.length; i++) 
+  						{
+  							var item = urls[i];
+  							if(item.url === url)
+  							{
+  								index = i;
+  								break;
+  							}
+  						}
 					if(index > -1)
 						urls.splice(index,1);
 					clients.get(clientObject).set(eventName,urls);
@@ -72,14 +82,25 @@ var EventController = function(){
 			clients.forEach(function(value, key) {
 				try
 				{
-  					if(typeof(value.get(eventName)) !== 'undefined')
+					var urlsArray = value.get(eventName); 
+  					if(typeof(urlsArray) !== 'undefined')
   					{
-  						if(typeof(value.get(eventName)) !== 'undefined' && value.get(eventName).indexOf(url) > -1)
+  						for (var i = 0; i < urlsArray.length; i++) 
   						{
-  							var jsonRPC = {"jsonrpc": "2.0", "method": eventName, "params": {"jsonObject":jsonObject, "url":url}};
-  							var strindRep = JSON.stringify(jsonRPC);
-  							key.send(strindRep);
-  							logger.info('Sending message from MasterLol to client');
+  							var item = urlsArray[i];
+  							if(item.url === url)
+  							{
+  								var requestID = null;
+  								if(typeof(item.requestID) !== 'undefined')
+  								{
+  									requestID = item.requestID;
+  								}
+  								var jsonRPC = {"jsonrpc": "2.0", "method": eventName, "params": {"jsonObject":jsonObject, "url":url},"id":requestID};
+  								var strindRep = JSON.stringify(jsonRPC);
+  								key.send(strindRep);
+  								logger.info('Sending message from MasterLol to client');
+  								break;
+  							}
   						}
   					}
   				}

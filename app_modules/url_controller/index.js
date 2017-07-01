@@ -53,7 +53,7 @@ var URLController = function(){
 		{
 			eventController.addToTemporals(paramsObj.socket);
     		repository.createIfNotExists(paramsObj.url,paramsObj.socket.id,paramsObj.requestID);
-    		eventController.subscribe(paramsObj.socket,paramsObj.eventName,paramsObj.url);
+    		eventController.subscribe(paramsObj.socket,paramsObj.eventName,paramsObj.url,paramsObj.requestID);
     		logger.info('Client subscribe to event ',paramsObj.eventName,' for url ',paramsObj.url,' client id ',paramsObj.socket.id);
     		return;
 		}
