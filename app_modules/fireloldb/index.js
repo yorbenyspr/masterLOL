@@ -331,7 +331,7 @@ module.exports = function(dbUrl){
 						return;
 					}
 
-					//Remove last child for that url
+					//Remove last child for that url and get the jsonObject
 					var queryObject = {_idfireloldb: "fireloldb"};
 					queryObject[dotNotation] =  {$exists:true};
 					var selectObject = {_id:false};
