@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.14.0",
+    "key-del": "^1.2.4",
+    "mongo-oplog": "^2.0.2",
     "mongodb": "^2.2.11",
     "promise": "^7.1.1",
     "q": "^1.5.0",
