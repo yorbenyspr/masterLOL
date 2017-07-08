@@ -164,7 +164,7 @@ var EventController = function(){
 	    	sendEventToClients('onChildChanged',jsonObject,url);
 	    };
 
-	    this.ChildRemoved = function(jsonObject, url)
+	    this.ChildRemoved = function(jsonObject, url,unsubscribe)
 	    {
 	    	logger.info('Triggered ChildRemoved Event');
 	    	sendEventToClients('onChildRemoved',jsonObject,url);

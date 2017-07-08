@@ -230,7 +230,7 @@ module.exports = function(dbUrl){
 								if(typeof e.message !== 'undefined')
 									e = e.message;
 								errMessage = e;
-								logger.error('Error en module : "firelol" function: "setValue", error: ',errMessage);
+								logger.error('Error en module : "firelol" function: "addChild", error: ',errMessage);
 								eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 								return;
 							}
@@ -244,7 +244,7 @@ module.exports = function(dbUrl){
 			if(typeof e.message !== 'undefined')
 				e = e.message;
 			errMessage = e;
-			logger.error('Error en module : "firelol" function: "setValue", error: ',errMessage);
+			logger.error('Error en module : "firelol" function: "addChild", error: ',errMessage);
 			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 			return;
 		}
@@ -261,7 +261,7 @@ module.exports = function(dbUrl){
 					if(err != null)
 					{
 						errMessage = err.message;
-						logger.error("Can't connect to ", dbUrl, ' to add child');
+						logger.error("Can't connect to ", dbUrl, ' to get value');
 						eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 						return;
 					}
@@ -276,7 +276,7 @@ module.exports = function(dbUrl){
 						if(err != null)
 						{
 							errMessage = err.message;
-							logger.error("Can't connect to ", dbUrl, ' to add child');
+							logger.error("Can't connect to ", dbUrl, ' to get value');
 							eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 							return;
 						}
@@ -296,7 +296,7 @@ module.exports = function(dbUrl){
 							if(typeof e.message !== 'undefined')
 								e = e.message;
 							errMessage = e;
-							logger.error('Error en module : "firelol" function: "setValue", error: ',errMessage);
+							logger.error('Error en module : "firelol" function: "getValue", error: ',errMessage);
 							eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 							return;
 						}
@@ -308,10 +308,89 @@ module.exports = function(dbUrl){
 			if(typeof e.message !== 'undefined')
 				e = e.message;
 			errMessage = e;
-			logger.error('Error en module : "firelol" function: "setValue", error: ',errMessage);
+			logger.error('Error en module : "firelol" function: "getValue", error: ',errMessage);
 			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 			return;
 		}
+	};
+	//Romove from database the last child in the url
+	//If the child is deleted result will be equals true
+	//Otherwise result will be false 
+	this.removeValue = function(url,socketID,requestID){
+		try
+		{
+			var errMessage = "Can't remove las child for url: " + url;
+			var dotNotation = getDotNotationFromUrl(url);
+			url = urlFromDotNotation(dotNotation);
+			mongoClient.connect(dbUrl,function(err,db){
+					if(err != null)
+					{
+						errMessage = err.message;
+						logger.error("Can't connect to ", dbUrl, ' to remove value');
+						eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
+						return;
+					}
+
+					//Remove last child for that url
+					var queryObject = {_idfireloldb: "fireloldb"};
+					queryObject[dotNotation] =  {$exists:true};
+					var selectObject = {_id:false};
+					selectObject[dotNotation] = true;
+					var removeObject = {};
+					removeObject[dotNotation] = true;
+
+					db.collection('firelol').findOneAndUpdate(queryObject,{$unset : removeObject},{projection:selectObject},function(err,result){
+						if(err != null)
+						{
+							errMessage = err.message;
+							logger.error("Can't connect to ", dbUrl, ' to remove value');
+							eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
+							return;
+						}
+						try
+						{
+							if(result != null && result.ok >= 1 && result.value !== null )
+							{
+								logger.info("Deleted url ",url," from database");
+								var jsonObject = result.value;//Get The url structure from database
+								var properties = dotNotation.split('.');
+								for (var i = 0; i < properties.length; i++) {
+									jsonObject= jsonObject[properties[i]];
+								};
+								var parentUrl = parentUrlForUrl(url);
+                            	var lastChild = lastChildForUrl(url);
+                            	var jsonObjectForParent = {};
+                            	jsonObjectForParent[lastChild] = jsonObject;
+								eventLayer.emit('ChildRemoved',jsonObject,url,true);//Event for that url
+								eventLayer.emit('ChildRemoved',jsonObjectForParent,parentUrl,false);//Event for parent url
+								result = true;
+							}
+							else
+								result = false;
+							eventLayer.emit('OperationResult',socketID,requestID,url,result,false,null,false);
+						}
+						catch(e)
+						{
+							if(typeof e.message !== 'undefined')
+								e = e.message;
+							errMessage = e;
+							logger.error('Error en module : "firelol" function: "removeValue", error: ',errMessage);
+							eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
+							return;
+						}
+					});
+				});
+		}
+		catch(e)
+		{
+			if(typeof e.message !== 'undefined')
+				e = e.message;
+			errMessage = e;
+			logger.error('Error en module : "firelol" function: "removeValue", error: ',errMessage);
+			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
+			return;
+		}
+
 	};
 	/**
 	*Check if the structure is in db otherwise create it
