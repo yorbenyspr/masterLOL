@@ -1,5 +1,5 @@
 var confManager = require('../configuration');  
-var repository = require('../db_connection')(confManager.getMongoServerUrl());
+var repository = require('../fireloldb')(confManager.getMongoServerUrl());
 var logger = require('../logger');
 var eventController = require('../event_controller');
 var URLController = function(){
@@ -173,6 +173,11 @@ var URLController = function(){
 		}
 	};
 	//End
+	//Get the structure for firelol when the application start
+	//Check that structure is on db otherwise create it
+	var firelolDbStructure = confManager.getFireLolDbStructure();
+	repository.checkForStructure(firelolDbStructure);
+
 };
 
 var urlController = new URLController();

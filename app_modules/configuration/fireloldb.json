@@ -1,0 +1,118 @@
+{
+  "events" : {
+    "event1244" : {
+      "descrip" : "Introduction",
+      "nUsers" : 344,
+      "name" : "Classical mechanics",
+      "state" : 2,
+      "urls" : {
+        "nodo1_key" : {
+          "usedIndex" : 0.7666,
+          "value" : "192.168.2.6/key1"
+        },
+        "nodo2_key3" : {
+          "usedIndex" : 0.7666,
+          "value" : "192.168.2.6/key4"
+        }
+      }
+    },
+    "event1245" : {
+      "descrip" : "class 2",
+      "nUsers" : 34,
+      "name" : "Classical mechanics",
+      "state" : 2,
+      "urls" : {
+        "nodo1_key" : {
+          "usedIndex" : 0.7666,
+          "value" : "192.168.2.6/key1"
+        },
+        "nodo2_key3" : {
+          "usedIndex" : 0.7666,
+          "value" : "192.168.2.6/key4"
+        }
+      }
+    }
+  },
+  "jsonStruct" : "",
+  "jsonVersion" : 0,
+  "masterLOL" : {
+    "actions" : {
+      "action1122" : {
+        "answerStatus" : 0,
+        "method" : "subtract",
+        "params" : {
+          "minuend" : 42,
+          "subtrahend" : 23
+        },
+        "sender" : {
+          "mac" : 16616,
+          "type" : 1
+        }
+      }
+    },
+    "perfomance" : {
+      "cpu" : 32,
+      "dateTime" : "05/05/2018 18:13",
+      "ram" : 89,
+      "temperature" : 67
+    }
+  },
+  "messages" : {
+    "event1244" : {
+      "msg1" : {
+        "data" : "14:00",
+        "msg" : "que bolá?",
+        "rating" : 323,
+        "type" : 1,
+        "user" : "locote"
+      }
+    },
+    "event1245" : {
+      "msg1" : {
+        "data" : "14:00",
+        "msg" : "que bolá?",
+        "rating" : 323,
+        "type" : 1,
+        "user" : "locote"
+      }
+    }
+  },
+  "nodos" : {
+    "nodo121" : {
+      "actions" : {
+        "action5339" : {
+          "answerStatus" : 0,
+          "method" : "multiplication",
+          "params" : {
+            "minuend" : 9,
+            "subtrahend" : 3
+          },
+          "sender" : {
+            "mac" : 16616,
+            "type" : 1
+          }
+        }
+      },
+      "perfomance" : {
+        "cpu" : 32,
+        "dateTime" : "05/05/2018 18:13",
+        "ram" : 89,
+        "temperature" : 67
+      },
+      "thread" : {
+        "thread2442" : {
+          "key" : "aula1",
+          "state" : 2
+        }
+      },
+      "url" : "192.168.2.89"
+    }
+  },
+  "parameters" : {
+    "deleteTimeDef" : 60,
+    "standByTimeDef" : 5,
+    "updateTimeMaster" : 5,
+    "updateTimeNodo" : 2
+  },
+  "_idfireloldb": "fireloldb"
+}
