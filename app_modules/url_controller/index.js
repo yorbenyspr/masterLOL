@@ -118,6 +118,19 @@ var URLController = function(){
     	}
     	
 	};
+	//socket,url,jsonObject
+	that["addChild"]=function (paramsObj){
+		if(typeof(paramsObj.socket) !== 'undefined' && typeof(paramsObj.url) !== 'undefined' && typeof(paramsObj.jsonObject) !== 'undefined')
+		{
+			eventController.addToTemporals(paramsObj.socket);
+			repository.addChild(paramsObj.url,paramsObj.jsonObject,paramsObj.socket.id,paramsObj.requestID,false);	
+		}
+    	else
+    	{
+    		that.sendBagRequestMessage(paramsObj);
+    	}
+    	
+	};
 	//socket,url
 	that["removeValue"]=function (paramsObj){
 		if(typeof(paramsObj.socket) !== 'undefined' && typeof(paramsObj.url) !== 'undefined')
