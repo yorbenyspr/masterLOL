@@ -36,7 +36,7 @@ function getDotNotationFromUrl(url){
 	var arrE = validateUrl(url);
 	var dotNotation = '';
 	for (var i = 0; i < arrE.length; i++) {
-		var srt = array[i];
+		var str = arrE[i];
 		if(isEmptyOrSpaces(str))
 		{
 			throw "Invalid url";
@@ -73,9 +73,14 @@ module.exports = function(dbUrl){
 						eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
 						return;
 					}
-
-					db.collection('firelol').findAndModify({dotNotation:{$exists:true}},{$set:{dotNotation : jsonObject}},function(error,result){
-						if(error != null)
+					//Search on firelol collection the property indicated by the url if exist update it
+					//Otherwise send an error
+					var queryObject = {_idfireloldb: "fireloldb"};
+					queryObject[dotNotation] =  {$exists:true};
+					var setObject = {};
+					setObject[dotNotation] = jsonObject;
+					db.collection('firelol').findAndModify(queryObject,{$set:setObject},function(err,result){
+						if(err != null)
 						{
 							errMessage = err.message;
                             logger.error("Can't Update the element at position: ", url);
@@ -85,7 +90,56 @@ module.exports = function(dbUrl){
 						{
 							logger.info("Updated element on url: ",url);
                             eventLayer.emit('DataChange',jsonObject,url);
-                            eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,toSubscribe);
+                            eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,false);
+						}
+					});
+				});
+
+		}
+		catch(e)
+		{
+			if(typeof e.message != undefined)
+				e = e.message;
+			errMessage = e;
+			logger.error('Error en module : "firelol" function: "setValue", error: ',errMessage);
+			eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
+			return;
+		}
+	};
+
+	/*
+	* @author Yorbenys
+	* Add a child property
+	* If the structure does no exist it is created
+	* If the structure exist then the las property is updated
+	*/
+	this.addChild = function(url,jsonObject,socketID,requestID){
+		var errMessage = 'Error adding child';
+		try
+		{
+			var dotNotation = getDotNotationFromUrl(url);
+			mongoClient.connect(dbUrl,function(err,db){
+					if(err != null)
+					{
+						errMessage = err.message;
+						logger.error("Can't connect to ", dbUrl, ' to add child');
+						eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
+						return;
+					}
+					//Search on firelol collection the property indicated by the url if exist update it
+					//Otherwise send an error 
+					db.collection('firelol').findAndModify({_idfireloldb: "fireloldb"},{$set:{dotNotation : jsonObject}},function(err,result){
+						if(err != null)
+						{
+							errMessage = err.message;
+                            logger.error("Can't create url: ", url);
+                            eventLayer.emit('OperationResult',socketID,requestID,url,null,true,errMessage,false);
+						}
+						else
+						{
+							logger.info("Created url: ",url);
+                            eventLayer.emit('ChildAdded',jsonObject,url);
+                            eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,false);
 						}
 					});
 				});

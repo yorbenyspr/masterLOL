@@ -1,33 +1,67 @@
 var eventLayer = require('../event_layer')
 var logger = require('../logger');
+
+var events = ["onDataChange","onChildAdded","onChildChanged","onChildRemoved","onChildMoved"];
+
+function validateEvent(eventName){
+	if(events.indexOf(eventName) === -1)
+		throw "Invalid event: " + eventName;
+};
+
+function validateUrlForEvent(url){
+	var arrE = url.split('/');
+	if(arrE.indexOf("") !== -1 || arrE.indexOf(" ") !== -1 || arrE.length <= 0)
+		throw "Invalid url: " + url;
+};
 var EventController = function(){
 		var clients = new Map();
 		var temporalClients = [];
 		this.subscribe = function(clientObject,eventName,url,requestID)
 		{
+			var suscribed = true;
+			var errorMessage = "Cant't subscribe to event: " + eventName + " url: " + url; 
 			var url = {"url":url,"requestID":requestID};
-			if(typeof(clients.get(clientObject)) === 'undefined')
+			try
 			{
-				var eventMap = new Map();
-				eventMap.set(eventName,[url]);
-				clients.set(clientObject,eventMap);
-			}
-			else
-			{
-				if(typeof(clients.get(clientObject).get(eventName))=== 'undefined')
+				validateEvent(eventName);
+				validateUrlForEvent(url);
+				if(typeof(clients.get(clientObject)) === 'undefined')
 				{
-					clients.get(clientObject).set(eventName,[url]);
+					var eventMap = new Map();
+					eventMap.set(eventName,[url]);
+					clients.set(clientObject,eventMap);
 				}
 				else
 				{
-					var urls = clients.get(clientObject).get(eventName);
-					if(urls.indexOf(url) < 0)
+					if(typeof(clients.get(clientObject).get(eventName))=== 'undefined')
 					{
-						urls.push(url);
-						clients.get(clientObject).set(eventName,urls);
+						clients.get(clientObject).set(eventName,[url]);
+					}
+					else
+					{
+						var urls = clients.get(clientObject).get(eventName);
+						if(urls.indexOf(url) < 0)
+						{
+							urls.push(url);
+							clients.get(clientObject).set(eventName,urls);
+						}
+						else
+							throw "You are already subscribed to the event: " + eventName + " for url: " + url;
 					}
 				}
+
 			}
+			catch(e)
+			{
+				suscribed = false;
+				if(typeof e.message !== undefined)
+					e = e.message;
+				errorMessage = e;
+			}
+			if(suscribed)
+				this.OperationResult(clientObject.id,requestID,url,true,false,null,false);
+			else
+				this.OperationResult(clientObject.id,requestID,url,null,true,errorMessage,false);
 		};
 		this.unsubscribe = function(clientObject,eventName,url,requestID,responseToClient)
 		{
