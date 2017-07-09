@@ -72,31 +72,86 @@ var EventController = function(){
 				{
 					responseToClient = true;
 				}
-
-				if(eventName === 'all')// Erase all event from that object
+				if(eventName !== null && eventName !== 'all')
+				{
+					try
+					{
+						validateEvent(eventName);
+					}
+					catch(e)
+					{
+						if(typeof(e.message) !== 'undefined')
+							e = e.message;
+						logger.error('Error unsubscribing client from MasterLol. Exception: ',e,'. Module "event_controller" function unsubscribe');
+				
+						if(responseToClient)
+							this.OperationResult(clientObject.id,requestID,url,null,true,"Invalid event: "+ eventName,false);
+						return;
+					}
+				}
+				if(url !== null && url !== 'all')
+				{
+					try
+					{
+						validateUrlForEvent(url);
+					}
+					catch(e)
+					{
+						if(typeof(e.message) !== 'undefined')
+							e = e.message;
+						logger.error('Error unsubscribing client from MasterLol. Exception: ',e,'. Module "event_controller" function unsubscribe');
+				
+						if(responseToClient)
+							this.OperationResult(clientObject.id,requestID,url,null,true,"Invalid url: "+ url,false);
+						return;
+					}
+				}
+				
+				if(eventName === 'all' || (eventName === null && url === null))// Erase all event from that object
 				{
 					clients.delete(clientObject);
 				}
-				else if(url === 'all')// Erase all url from that client 
+				else if((url === 'all' && eventName !== null) || (eventName !== null && url === null) )// Erase all url from that client on that event.
 				{
 					clients.get(clientObject).delete(eventName);
 				}
+				else if(eventName === null && url !== null)// Erase that url from all events
+				{
+					clients.get(clientObject).forEach(function(urls,eventName){
+						for (var i = 0; i < urls.length; i++) {
+							var urlObject = urls[i];
+							if(urlObject.url === url)
+							{
+								urls.splice(i,1);
+								i--;
+							}
+						};
+
+					});
+				}
 				else //Erase that url from that event
 				{
-					var urls = clients.get(clientObject).get(eventName);
-					var index = -1;
-					for (var i = 0; i < urls.length; i++) 
-  						{
-  							var item = urls[i];
-  							if(item.url === url)
+					var events = clients.get(clientObject);
+					if(typeof(events) !== 'undefined')
+					{
+						var urls = events.get(eventName);
+						if(typeof(urls) !== 'undefined')
+						{
+							var index = -1;
+							for (var i = 0; i < urls.length; i++) 
   							{
-  								index = i;
-  								break;
+  								var item = urls[i];
+  								if(item.url === url)
+  								{
+  									index = i;
+  									break;
+  								}
   							}
-  						}
-					if(index > -1)
-						urls.splice(index,1);
-					clients.get(clientObject).set(eventName,urls);
+							if(index > -1)
+								urls.splice(index,1);
+							clients.get(clientObject).set(eventName,urls);
+						}
+					}
 				}
 
 				if(responseToClient)
@@ -107,9 +162,6 @@ var EventController = function(){
 				if(typeof(e.message) !== 'undefined')
 					e = e.message;
 				logger.error('Error unsubscribing client from MasterLol. Exception: ',e,'. Module "event_controller" function unsubscribe');
-				
-				if(responseToClient)
-					this.OperationResult(clientObject.id,requestID,url,null,true,e,false);
 			}
 		};
 		var sendEventToClients = function(eventName,jsonObject,url)
