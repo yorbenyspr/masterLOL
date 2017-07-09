@@ -1,3 +1,4 @@
+var firelolUtils = require('../firelolutils');
 /**
 *Helpers Functions
 */
@@ -41,9 +42,7 @@ function lastChildForUrl(url){
 * Validate an URL and return its array representation
 */
 function validateUrl(url){
-	var regEx = new RegExp("[a-zA-Z0-9]{1,768}(/[a-zA-Z0-9]{1,768})?$")
-	if(!regEx.test(url))
-		throw 'Bag url: '+ url;
+	firelolUtils.validateUrl(url);
 	var arrE = url.split('/');
 	while(arrE.indexOf("")!=-1 || arrE.indexOf(" ") != -1 )
 			{
@@ -403,7 +402,7 @@ module.exports = function(dbUrl){
 			if(err != null)
 			{
 				errMessage = err.message;
-				logger.error(errMessage);
+				logger.error("Can't connect to db for check firelol structure. Please check your mongodb settings and restart de application. Exception: ",errMessage);
 				return;
 			}
 
@@ -411,7 +410,7 @@ module.exports = function(dbUrl){
 				if(err != null)
 				{
 					errMessage = err.message;
-					logger.error(errMessage);
+					logger.error("Can't check firelol structure.  Please check your mongodb settings and restart de application. Exception: ",errMessage);
 					return;
 				}
 
@@ -421,7 +420,7 @@ module.exports = function(dbUrl){
 						if(err != null)
 						{
 							errMessage = err.message;
-							logger.error(errMessage);
+							logger.error("Can't create firelol structure.  Please check your mongodb settings and restart de application. Exception: ",errMessage);
 							return;
 						}
 						logger.info("Firelol Db structure checked");

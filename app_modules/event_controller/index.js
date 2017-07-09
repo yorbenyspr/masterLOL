@@ -1,6 +1,6 @@
 var eventLayer = require('../event_layer')
 var logger = require('../logger');
-
+var firelolUtils = require('../firelolutils');
 var events = ["onDataChange","onChildAdded","onChildChanged","onChildRemoved","onChildMoved"];
 
 function validateEvent(eventName){
@@ -9,6 +9,7 @@ function validateEvent(eventName){
 };
 
 function validateUrlForEvent(url){
+	firelolUtils.validateUrl(url);
 	var arrE = url.split('/');
 	if(arrE.indexOf("") !== -1 || arrE.indexOf(" ") !== -1 || arrE.length <= 0)
 		throw "Invalid url: " + url;
@@ -24,7 +25,7 @@ var EventController = function(){
 			try
 			{
 				validateEvent(eventName);
-				validateUrlForEvent(url);
+				validateUrlForEvent(url.url);
 				if(typeof(clients.get(clientObject)) === 'undefined')
 				{
 					var eventMap = new Map();
@@ -46,7 +47,7 @@ var EventController = function(){
 							clients.get(clientObject).set(eventName,urls);
 						}
 						else
-							throw "You are already subscribed to the event: " + eventName + " for url: " + url;
+							throw "You are already subscribed to the event: " + eventName + " for url: " + url.url;
 					}
 				}
 
@@ -54,7 +55,7 @@ var EventController = function(){
 			catch(e)
 			{
 				suscribed = false;
-				if(typeof e.message !== undefined)
+				if(typeof(e.message) !== 'undefined')
 					e = e.message;
 				errorMessage = e;
 			}
@@ -146,6 +147,33 @@ var EventController = function(){
   				}
 				});
 		};
+		//When and url is removed unsubscribe all events listening for that url and its childs
+		var unsubscribeEventsForUrlAndItsChild = function(url){
+			var regularExpresion = new RegExp("^("+url+")"); //Check for childs of url
+			clients.forEach(function(value, key) {
+				value.forEach(function(urls,eventName) {
+					try
+					{
+						for (var i = 0; i < urls.length; i++) {
+							var urlObject=urls[i];
+							if(urlObject.url === url || regularExpresion.test(urlObject.url))
+							{
+								urls.splice(i,1);
+								i--;
+							}
+						}
+					}
+					catch(e)
+					{
+						if(typeof(e.message) !== 'undefined')
+							e = e.message;
+						logger.error('Error unsubscribing client from MasterLol. Exception: ',e,'. Module "event_controller" function "unsubscribeEventsForUrlAndItsChild"');
+					}
+					
+				});
+			});
+		};
+
 	    this.DataChange = function(jsonObject, url)
 	    {
 	    	logger.info('Triggered DataChange Event');
@@ -168,6 +196,11 @@ var EventController = function(){
 	    {
 	    	logger.info('Triggered ChildRemoved Event');
 	    	sendEventToClients('onChildRemoved',jsonObject,url);
+	    	//Unsubcribe events for that url and its childs
+	    	if(typeof(unsubscribe) !== 'undefined' && unsubscribe === true )
+	    	{
+	    		unsubscribeEventsForUrlAndItsChild(url);
+	    	}
 	    };
 
 	    this.ChildMoved = function(jsonObject, url)
