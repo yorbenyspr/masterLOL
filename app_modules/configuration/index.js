@@ -20,6 +20,10 @@ var Configuration = function()
 	{
 		return appjson.pingInterval;
 	};
+	this.getMaxPing = function()
+	{
+		return appjson.maxPing;
+	};
 	this.getFireLolDbStructure = function()
 	{
 		return fireLolDbStructurejson;

@@ -20,6 +20,7 @@ wServer.on('connection', function(webSocketConnection,req){
 
     //Ping and Pong Messages. Used for know if a client has open the connection channel
     webSocketConnection.isAlive = true;
+    webSocketConnection.countPing = 0;
     webSocketConnection.on('pong', connectionAlive);
     
     //Set default send function to custom function
@@ -49,7 +50,10 @@ logger.info("Making ping to clients every: ",confManager.getPingInterval(),' "ms
 //Function for send ping message to the client
 const interval = setInterval(function ping() {
   wServer.clients.forEach(function each(webSocketConnection) {
-    if (webSocketConnection.isAlive === false) 
+    if(typeof(webSocketConnection.countPing) === 'undefined')
+        webSocketConnection.countPing = 1;
+    
+    if (webSocketConnection.isAlive === false && webSocketConnection.countPing >= confManager.getMaxPing()) 
     {
         logger.info('Client does not response ping message from master lol. Client id: ',webSocketConnection.id,'. Terminate connection');
         urlController.unsubscribe({"socket":webSocketConnection,"eventName":"all","url":"all","requestID":null,"responseToClient":false});
@@ -57,6 +61,7 @@ const interval = setInterval(function ping() {
     }
 
     webSocketConnection.isAlive = false;
+    webSocketConnection.countPing = webSocketConnection.countPing + 1;
     logger.info('Send ping message from master lol to client id: ',webSocketConnection.id);
     webSocketConnection.ping('', false, true);
   });
@@ -66,6 +71,7 @@ const interval = setInterval(function ping() {
 function connectionAlive() {
     logger.info('Client response with pong message. Client id: ',this.id);
     this.isAlive = true;
+    this.countPing = 0;
 }
 //Custom function for send message to client
 function customSend(message){
