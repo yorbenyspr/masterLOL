@@ -2,13 +2,6 @@ var firelolUtils = require('../firelolutils');
 /**
 *Helpers Functions
 */
-/**
-* Check if an string is empty or white spaces
-*/
-function isEmptyOrSpaces(str) {
-    return str === null || str.match(/^ *$/) !== null;
-};
-
 function urlFromDotNotation(str){
 	return str.replace(new RegExp("[.]", 'g'), '/');
 };
@@ -18,7 +11,7 @@ function parentUrlForUrl(url){
 	var parent = '';
 	for (var i = 0; i < arrE.length-1; i++) {
 		var str = arrE[i];
-		if(!isEmptyOrSpaces(str))
+		if(!firelolUtils.isEmptyOrSpaces(str))
 			parent+=str;
 
 		if(i < arrE.length - 2)
@@ -32,7 +25,7 @@ function lastChildForUrl(url){
 	var arrE = url.split('/');
 	for (var i = arrE.length - 1; i >= 0; i--) {
 		var str = arrE[i];
-		if(!isEmptyOrSpaces(str))
+		if(!firelolUtils.isEmptyOrSpaces(str))
 			return str;
 	};
 	throw "Cant'get the last child for url: " + url;
@@ -68,7 +61,7 @@ function getDotNotationFromUrl(url){
 	var dotNotation = '';
 	for (var i = 0; i < arrE.length; i++) {
 		var str = arrE[i];
-		if(isEmptyOrSpaces(str))
+		if(firelolUtils.isEmptyOrSpaces(str))
 		{
 			throw "Invalid url";
 		}
@@ -77,7 +70,7 @@ function getDotNotationFromUrl(url){
 			dotNotation += '.';
 	};
 
-	if(isEmptyOrSpaces(dotNotation))
+	if(firelolUtils.isEmptyOrSpaces(dotNotation))
 		throw "Invalid url";
 	return dotNotation;
 };
