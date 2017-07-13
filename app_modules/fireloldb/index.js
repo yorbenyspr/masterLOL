@@ -52,7 +52,7 @@ function validateUrl(url){
 			throw "The node key can't be greater than 768 bytes"; 
 	}
 	if(arrE.indexOf("_idfireloldb") != -1)
-		throw "Bag Url";
+		throw "Bad Url";
 	return arrE;
 
 }

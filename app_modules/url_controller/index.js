@@ -13,10 +13,10 @@ var URLController = function(){
         	if(Object.prototype.toString.call(jsonrpc.params) !=="[object Object]")
         	{
         		requestID = typeof(jsonrpc.id) !=='undefined' ? jsonrpc.id : null;
-        		var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Bag Request"}, "id": requestID};
+        		var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Bad Request"}, "id": requestID};
   				var strindRep = JSON.stringify(jsonRPC);
   				socket.send(strindRep);
-	    		logger.info('Bag Request from client. JSONRPC: ', data);
+	    		logger.info('Bad Request from client. JSONRPC: ', data);
 	    		return;
         	}
         	if(jsonrpc['jsonrpc'] === "2.0")//Only accept jsonrpc v 2.0
@@ -37,9 +37,9 @@ var URLController = function(){
 			if(typeof(e.message) !== 'undefined')
 				e = e.message;
         	logger.error('Error reading jsonrpc. Exception: ',e,'. Module "url_controller" on function "handleJSONRPC"');
-        	var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Bag Request"}, "id": requestID};
+        	var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Bad Request"}, "id": requestID};
   			var strindRep = JSON.stringify(jsonRPC);
-  			logger.error('Sending Bag Request to the client from module: "url_controller" method: "handleJSONRPC"');
+  			logger.error('Sending Bad Request to the client from module: "url_controller" method: "handleJSONRPC"');
   			socket.send(strindRep);
     	} 
 	};
@@ -166,7 +166,7 @@ var URLController = function(){
 		}
 		else if(typeof(paramsObj.socket) !== 'undefined')
 		{
-			var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Bag Request for "+ typeE}, "id": paramsObj.requestID};
+			var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Bad Request for "+ typeE}, "id": paramsObj.requestID};
   			var strindRep = JSON.stringify(jsonRPC);
   			paramsObj.socket.send(strindRep);
   			return false;
@@ -176,7 +176,7 @@ var URLController = function(){
 	that.sendBagRequestMessage = function(paramsObj){
 		try
 		{
-			var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Bag Request"}, "id": paramsObj.requestID};
+			var jsonRPC = {"jsonrpc": "2.0", "error": {"code": -32000, "message": "Bad Request"}, "id": paramsObj.requestID};
   			var strindRep = JSON.stringify(jsonRPC);
   			paramsObj.socket.send(strindRep);
 		}catch(e){

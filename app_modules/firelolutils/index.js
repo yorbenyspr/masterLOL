@@ -3,14 +3,14 @@ var FireLolUtils = function() {
 	this.validateUrl = function (url){
 		var regEx = new RegExp("[a-zA-Z0-9]{1,768}(/[a-zA-Z0-9]{1,768})?$")
 		if(!regEx.test(url))
-			throw 'Bag url: '+ url;
+			throw 'Bad url: '+ url;
 		var arrE = url.split("/");
 		if(arrE.length > 32)
-			throw 'Bag url: '+ url;
+			throw 'Bad url: '+ url;
 		for (var i = 0; i < arrE.length; i++) {
 			var str = arrE[i];
 			if(str.length > 768 || hasInvalidCharacters(str))
-				throw 'Bag url: '+ url;
+				throw 'Bad url: '+ url;
 		};
 		return true;
 	};
