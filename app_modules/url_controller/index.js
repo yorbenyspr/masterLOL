@@ -25,6 +25,7 @@ var URLController = function(){
         			jsonrpc.params.requestID=jsonrpc.id;
         		else
         			jsonrpc.params.requestID=null;
+        		var requestID = jsonrpc.params.requestID;
             	jsonrpc.params.socket=socket;
             	var methodName= jsonrpc.method;
             	that[methodName].apply(that,[jsonrpc.params]);
