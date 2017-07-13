@@ -208,6 +208,7 @@ module.exports = function(dbUrl){
                             		var jsonObjectForParent = {};
                             		jsonObjectForParent[lastChild] = jsonObject;
                             		eventLayer.emit('ChildAdded',jsonObjectForParent,parentUrl);
+                            		eventLayer.emit('ChildAdded',jsonObject,url);
                             		eventLayer.emit('OperationResult',socketID,requestID,url,true,false,null,false);
 								}
 								else
