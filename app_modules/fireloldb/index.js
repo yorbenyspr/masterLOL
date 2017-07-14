@@ -44,17 +44,7 @@ function validateUrl(url){
 				else if(arrE.indexOf(" ") != -1)
 					arrE.splice(arrE.indexOf(" "),1);//Quitando string que solo es un espacio en blanco
 			}
-	if(arrE.length > 32)
-		throw "The node key can't be greater than 32 levels";
-	for(var i = 0; i < arrE.length; i++)
-	{
-		if(arrE[i].length > 768)
-			throw "The node key can't be greater than 768 bytes"; 
-	}
-	if(arrE.indexOf("_idfireloldb") != -1)
-		throw "Bad Url";
 	return arrE;
-
 }
 function getDotNotationFromUrl(url){
 	var arrE = validateUrl(url);

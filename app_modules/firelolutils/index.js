@@ -6,7 +6,10 @@ var FireLolUtils = function() {
 			throw 'Bad url: '+ url;
 		var arrE = url.split("/");
 		if(arrE.length > 32)
-			throw 'Bad url: '+ url;
+			throw "The node key can't be greater than 32 levels. Url: " + url;
+
+		if(arrE.indexOf("_idfireloldb") != -1)
+			throw "Bad Url";
 		for (var i = 0; i < arrE.length; i++) {
 			var str = arrE[i];
 			if(str.length > 768 || hasInvalidCharacters(str))
